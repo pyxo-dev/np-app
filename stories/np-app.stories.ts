@@ -20,8 +20,14 @@ interface ArgTypes {
   backgroundColor?: string;
 }
 
-const Template: Story<ArgTypes> = ({ title, backgroundColor = 'white' }: ArgTypes) => html`
-  <np-app style="--np-app-background-color: ${backgroundColor}" .title=${title}></np-app>
+const Template: Story<ArgTypes> = ({
+  title,
+  backgroundColor = 'white',
+}: ArgTypes) => html`
+  <np-app
+    style="--np-app-background-color: ${backgroundColor}"
+    .title=${title}
+  ></np-app>
 `;
 
 export const App = Template.bind({});

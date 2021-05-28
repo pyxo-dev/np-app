@@ -1,3 +1,9 @@
-import { NpApp } from './NpApp.js';
+import { customElement, html, LitElement } from 'lit-element';
+import './layouts/one/np-layout';
 
-customElements.define('np-app', NpApp);
+@customElement('np-app')
+export class NpApp extends LitElement {
+  render() {
+    return html`<np-layout></np-layout>`;
+  }
+}

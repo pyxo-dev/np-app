@@ -37,6 +37,18 @@
   "author": "np-app",
   "license": "MIT",
   "dependencies": {
+    "@spectrum-web-components/action-button": "^0.5.0",
+    "@spectrum-web-components/action-group": "^0.4.8",
+    "@spectrum-web-components/action-menu": "^0.10.0",
+    "@spectrum-web-components/avatar": "^0.7.5",
+    "@spectrum-web-components/button": "^0.14.0",
+    "@spectrum-web-components/button-group": "^0.6.6",
+    "@spectrum-web-components/icon": "^0.9.6",
+    "@spectrum-web-components/icons-workflow": "^0.6.6",
+    "@spectrum-web-components/menu": "^0.8.6",
+    "@spectrum-web-components/sidenav": "^0.10.1",
+    "@spectrum-web-components/theme": "^0.8.7",
+    "@spectrum-web-components/top-nav": "^0.3.1",
     "lit-element": "^2.5.1",
     "lit-html": "^1.4.1"
   },
@@ -55,13 +67,7 @@
         "error"
       ],
       "import/no-unresolved": "off",
-      "import/extensions": [
-        "error",
-        "always",
-        {
-          "ignorePackages": true
-        }
-      ]
+      "import/extensions": "off"
     }
   },
   "prettier": {

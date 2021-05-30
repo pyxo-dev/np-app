@@ -1,9 +1,8 @@
 import '@spectrum-web-components/theme/scale-medium.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import '@spectrum-web-components/theme/theme-dark.js';
-import { css, customElement, html, LitElement } from 'lit-element';
-import '../../components/main/np-side-nav';
-import '../../components/main/np-top-nav';
+import { css, customElement, html, LitElement, property } from 'lit-element';
+import { router } from '../../router';
 import './np-aside';
 import './np-header';
 import './np-main';
@@ -43,12 +42,6 @@ export class NpLayout extends LitElement {
       left: 0px;
       padding-left: 8px;
       z-index: 10;
-
-      --spectrum-actionbutton-height: var(--spectrum-global-dimension-size-500);
-      --spectrum-actionbutton-min-width: var(
-        --spectrum-global-dimension-size-500
-      );
-      --spectrum-alias-workflow-icon-size: 22px;
     }
 
     #body {
@@ -75,19 +68,62 @@ export class NpLayout extends LitElement {
     }
   `;
 
+  @property() headerOutlet = html``;
+  @property() asideOutlet = html``;
+  @property() mainOutlet = html``;
+
+  constructor() {
+    super();
+
+    const loadNavs = () => {
+      import('../../components/main/np-top-nav');
+      import('../../components/main/np-side-nav');
+      this.headerOutlet = html`<np-top-nav></np-top-nav>`;
+      this.asideOutlet = html`<np-side-nav></np-side-nav>`;
+    };
+
+    router.on('/', () => {
+      loadNavs();
+      this.mainOutlet = html`Home ...`;
+    });
+
+    router.on('/blog', () => {
+      loadNavs();
+      this.mainOutlet = html`Blog ...`;
+    });
+
+    router.on('/docs', () => {
+      loadNavs();
+      this.mainOutlet = html`Docs ...`;
+    });
+
+    router.on('/guides', () => {
+      loadNavs();
+      this.mainOutlet = html`Guides ...`;
+    });
+
+    router.on('/community', () => {
+      loadNavs();
+      this.mainOutlet = html`Community ...`;
+    });
+
+    router.on('/about', () => {
+      loadNavs();
+      this.mainOutlet = html`About ...`;
+    });
+
+    router.resolve();
+  }
+
   render() {
     return html`
       <sp-theme color="dark" id="app">
-        <np-header>
-          <np-top-nav></np-top-nav>
-        </np-header>
+        <np-header>${this.headerOutlet}</np-header>
 
         <div id="body">
-          <np-aside>
-            <np-side-nav></np-side-nav>
-          </np-aside>
+          <np-aside>${this.asideOutlet}</np-aside>
 
-          <np-main> Testing ... </np-main>
+          <np-main>${this.mainOutlet}</np-main>
         </div>
       </sp-theme>
     `;

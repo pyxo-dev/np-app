@@ -1,4 +1,5 @@
-import { css, customElement, html, LitElement } from 'lit-element';
+import '@spectrum-web-components/underlay/sp-underlay';
+import { css, customElement, html, LitElement, property } from 'lit-element';
 
 @customElement('np-aside')
 export class NpAside extends LitElement {
@@ -34,10 +35,14 @@ export class NpAside extends LitElement {
       :host([open]) aside {
         transform: translateX(0);
       }
+
+      .scrim {
+        z-index: 10;
+      }
     }
 
     #navigation {
-      width: var(--spectrum-global-dimension-size-2400);
+      width: var(--spectrum-global-dimension-size-2000);
       padding: 0 24px 24px 24px;
       flex: 1;
       flex-grow: 1;
@@ -47,8 +52,26 @@ export class NpAside extends LitElement {
     }
   `;
 
+  @property({ type: Boolean, reflect: true })
+  public open = false;
+
+  firstUpdated() {
+    window.addEventListener('toggle-side-nav', () => {
+      this.open = !this.open;
+    });
+  }
+
+  private close() {
+    this.open = false;
+  }
+
   render() {
     return html`
+      <sp-underlay
+        class="scrim"
+        @click=${this.close}
+        ?open=${this.open}
+      ></sp-underlay>
       <aside>
         <div id="navigation">
           <slot></slot>

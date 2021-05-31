@@ -115,9 +115,23 @@ export class NpLayout extends LitElement {
     router.resolve();
   }
 
+  @property({ type: Boolean, reflect: true })
+  public dark = true;
+
+  firstUpdated() {
+    window.addEventListener('toggle-theme', () => {
+      this.dark = !this.dark;
+      import(
+        `@spectrum-web-components/theme/theme-${
+          this.dark ? 'dark' : 'light'
+        }.js`
+      );
+    });
+  }
+
   render() {
     return html`
-      <sp-theme color="dark" id="app">
+      <sp-theme color=${this.dark ? 'dark' : 'light'} id="app">
         <np-header>${this.headerOutlet}</np-header>
 
         <div id="body">

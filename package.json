@@ -47,6 +47,7 @@
     "@spectrum-web-components/icons-workflow": "^0.6.6",
     "@spectrum-web-components/menu": "^0.8.6",
     "@spectrum-web-components/sidenav": "^0.10.1",
+    "@spectrum-web-components/switch": "^0.7.7",
     "@spectrum-web-components/theme": "^0.8.7",
     "@spectrum-web-components/top-nav": "^0.3.1",
     "@spectrum-web-components/underlay": "^0.6.5",

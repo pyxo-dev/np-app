@@ -28,4 +28,11 @@ export default merge(baseConfig, {
   // alternatively, you can use your JS as entrypoint for rollup and
   // optionally set a HTML template manually
   // input: './app.js',
+
+  // Set `this` to `window` for `focus-visible` module.
+  // https://rollupjs.org/guide/en/#modulecontext
+  // https://github.com/adobe/spectrum-web-components/blob/5477e2946254a6808b3809110da1eaea79f2f92b/projects/example-project-rollup/rollup.config.js#L45
+  moduleContext: {
+    [require.resolve('focus-visible')]: 'window',
+  },
 });

@@ -10,12 +10,17 @@ type NpNavigo = Navigo & {
   ) => Navigo;
 };
 
+interface NavigoLink extends Element {
+  hasListenerAttached: boolean;
+  navigoHandler: EventListener;
+}
+
 export const router: NpNavigo = new Navigo('/');
 
-router.updatePageLinks = function (
+router.updatePageLinks = function updatePageLinks(
   element: Element | Document | DocumentFragment = document
 ): Navigo {
-  let self = this;
+  const self = this;
 
   if (!isWindowAvailable) return self;
 
@@ -23,10 +28,11 @@ router.updatePageLinks = function (
     DEFAULT_LINK_SELECTOR
   );
 
-  links.forEach(link => {
+  links.forEach(l => {
+    const link = l;
     if (
-      'false' === link.getAttribute('data-navigo') ||
-      '_blank' === link.getAttribute('target')
+      link.getAttribute('data-navigo') === 'false' ||
+      link.getAttribute('target') === '_blank'
     ) {
       if (link.hasListenerAttached) {
         link.removeEventListener('click', link.navigoHandler);
@@ -35,7 +41,7 @@ router.updatePageLinks = function (
     }
     if (!link.hasListenerAttached) {
       link.hasListenerAttached = true;
-      link.navigoHandler = function (e) {
+      link.navigoHandler = e => {
         if (
           ((<KeyboardEvent>e).ctrlKey || (<KeyboardEvent>e).metaKey) &&
           (e.target as HTMLElement)?.tagName.toLowerCase() === 'a'
@@ -48,10 +54,8 @@ router.updatePageLinks = function (
         }
         // handling absolute paths
         if (location.match(/^(http|https)/) && typeof URL !== 'undefined') {
-          try {
-            const u = new URL(location);
-            location = u.pathname + u.search;
-          } catch (err) {}
+          const u = new URL(location);
+          location = u.pathname + u.search;
         }
         const options = parseNavigateOptions(
           link.getAttribute('data-navigo-options')
@@ -72,6 +76,7 @@ router.updatePageLinks = function (
             link.dispatchEvent(routeChangeEvent);
           }
         }
+        return undefined;
       };
       link.addEventListener('click', link.navigoHandler);
     }

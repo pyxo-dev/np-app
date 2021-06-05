@@ -1,82 +1,53 @@
-import '@spectrum-web-components/action-button/sp-action-button';
-import '@spectrum-web-components/switch/sp-switch';
-import '@spectrum-web-components/top-nav/sp-top-nav';
-import '@spectrum-web-components/top-nav/sp-top-nav-item';
-import { css, customElement, html, LitElement } from 'lit-element';
+import type { TopNav } from '@spectrum-web-components/top-nav';
+import '@spectrum-web-components/top-nav/sp-top-nav-item.js';
+import '@spectrum-web-components/top-nav/sp-top-nav.js';
+import { html, LitElement } from 'lit';
+import { customElement, query } from 'lit/decorators.js';
 import { router } from '../../router';
 
 @customElement('np-top-nav')
 export class NpTopNav extends LitElement {
-  static styles = css`
-    @media screen and (min-width: 961px) {
-      #side-nav-toggle {
-        display: none;
-      }
-    }
+  @query('sp-top-nav')
+  spTopNav: TopNav | undefined;
 
-    #theme-toggle {
-      margin-inline-start: auto;
-    }
-  `;
-
-  firstUpdated() {
-    const topNav = this.renderRoot.querySelector('sp-top-nav');
-    if (topNav) {
-      const routeChangeHandler = () => {
-        topNav.selected = window.location.href;
-      };
-      window.addEventListener('route-change', routeChangeHandler);
-      window.addEventListener('popstate', routeChangeHandler);
-      window.addEventListener('load', routeChangeHandler);
-    }
-
-    this.updateComplete.then(() => {
-      const switches = this.renderRoot.querySelectorAll('sp-switch');
-      switches.forEach(sw => {
-        const input = sw.renderRoot.querySelector('input');
-        input?.setAttribute('style', 'opacity: 0');
-      });
-    });
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('route-change', this.routeChangeHandler);
+    window.addEventListener('popstate', this.routeChangeHandler);
+    window.addEventListener('load', this.routeChangeHandler);
   }
+
+  disconnectedCallback() {
+    window.removeEventListener('route-change', this.routeChangeHandler);
+    window.removeEventListener('popstate', this.routeChangeHandler);
+    window.removeEventListener('load', this.routeChangeHandler);
+    super.disconnectedCallback();
+  }
+
+  private routeChangeHandler = () => {
+    if (this.spTopNav) this.spTopNav.selected = window.location.href;
+  };
 
   updated() {
     router.updatePageLinks(this.renderRoot);
   }
 
-  private _dispatchToggleSideNav() {
-    this.dispatchEvent(
-      new Event('toggle-side-nav', { bubbles: true, composed: true })
-    );
-  }
-
-  private _dispatchToggleTheme() {
-    this.dispatchEvent(
-      new Event('toggle-theme', { bubbles: true, composed: true })
-    );
-  }
-
   render() {
-    return html`
-      <sp-top-nav>
-        <sp-action-button
-          id="side-nav-toggle"
-          quiet
-          label="Open Navigation"
-          @click=${this._dispatchToggleSideNav}
-          >☰</sp-action-button
-        >
-        <sp-top-nav-item href="" value="Home" data-navigo>Home</sp-top-nav-item>
-        <sp-top-nav-item href="blog" value="Blog" data-navigo
-          >Blog</sp-top-nav-item
-        >
+    return html`<sp-top-nav>
+      <slot name="side-nav-toggle"></slot>
 
-        <sp-switch
-          id="theme-toggle"
-          checked
-          @change=${this._dispatchToggleTheme}
-          >Dark</sp-switch
-        >
-      </sp-top-nav>
-    `;
+      <sp-top-nav-item href="" value="Home" data-navigo>Home</sp-top-nav-item>
+      <sp-top-nav-item href="blog" value="Blog" data-navigo
+        >Blog</sp-top-nav-item
+      >
+
+      <slot name="theme-manager"></slot>
+    </sp-top-nav>`;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'np-top-nav': NpTopNav;
   }
 }

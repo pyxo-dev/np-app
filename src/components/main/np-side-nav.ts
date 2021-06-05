@@ -1,6 +1,7 @@
 import '@spectrum-web-components/sidenav/sp-sidenav-item.js';
 import '@spectrum-web-components/sidenav/sp-sidenav.js';
-import { customElement, html, LitElement } from 'lit-element';
+import { html, LitElement } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import { router } from '../../router';
 
 @customElement('np-side-nav')
@@ -9,7 +10,8 @@ export class NpSideNav extends LitElement {
     const sideNavItems = this.renderRoot.querySelectorAll('sp-sidenav-item');
     if (sideNavItems) {
       const routeChangeHandler = () => {
-        sideNavItems.forEach(i => {
+        sideNavItems.forEach(item => {
+          const i = item;
           i.selected =
             i.href === window.location.href.replace(window.location.origin, '');
         });
@@ -72,5 +74,11 @@ export class NpSideNav extends LitElement {
         ></sp-sidenav-item>
       </sp-sidenav>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'np-side-nav': NpSideNav;
   }
 }

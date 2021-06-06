@@ -83,7 +83,7 @@ export class NpLayout extends LitElement {
   }
 
   private handleRouteChange = async () => {
-    const pathname = location.href.replace(location.origin, '');
+    const pathname = window.location.href.replace(window.location.origin, '');
     this.startProgress();
     const data = await router.resolve({ pathname });
     this.stopProgress();

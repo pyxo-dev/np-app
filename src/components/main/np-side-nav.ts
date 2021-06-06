@@ -25,7 +25,8 @@ export class NpSideNav extends LitElement {
   private routeChangeHandler = () => {
     this.spSideNavItems?.forEach(item => {
       const i = item;
-      i.selected = i.href === location.href.replace(location.origin, '');
+      i.selected =
+        i.href === window.location.href.replace(window.location.origin, '');
     });
   };
 

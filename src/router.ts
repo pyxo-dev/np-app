@@ -21,11 +21,11 @@ export function handleSpaLink(e: Event) {
     e.target;
   if (linkElement.target === '_blank') return;
 
-  const oldHref = location.href.replace(location.origin, '');
+  const oldHref = window.location.href.replace(window.location.origin, '');
   const newHref = linkElement.href;
-  if (newHref === void 0 || newHref === oldHref) return;
+  if (newHref === undefined || newHref === oldHref) return;
 
-  history.pushState({}, '', newHref);
+  window.history.pushState({}, '', newHref);
 
   linkElement.dispatchEvent(
     new PopStateEvent('popstate', { bubbles: true, composed: true })

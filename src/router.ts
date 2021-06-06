@@ -1,85 +1,35 @@
-import Navigo from 'navigo';
-import { parseNavigateOptions, windowAvailable } from 'navigo/lib/es/utils';
+import { html } from 'lit';
+import type { Routes } from 'universal-router';
+import UniversalRouter from 'universal-router';
 
-const DEFAULT_LINK_SELECTOR = '[data-navigo]';
-const isWindowAvailable = windowAvailable();
+const routes: Routes = [
+  { path: '', action: () => ({ main: html`Home ...` }) },
+  { path: '/blog', action: () => ({ main: html`Blog ...` }) },
+  { path: '/docs', action: () => ({ main: html`Docs ...` }) },
+  { path: '/guides', action: () => ({ main: html`Guides ...` }) },
+  { path: '/:other', action: () => ({ main: html`Other ...` }) },
+];
 
-type NpNavigo = Navigo & {
-  updatePageLinks: (
-    element: Element | Document | DocumentFragment | undefined
-  ) => Navigo;
-};
+export const router = new UniversalRouter(routes);
 
-interface NavigoLink extends Element {
-  hasListenerAttached: boolean;
-  navigoHandler: EventListener;
-}
+export function handleSpaLink(e: Event) {
+  if ((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) return;
 
-export const router: NpNavigo = new Navigo('/');
+  if (!e.target) return;
 
-router.updatePageLinks = function updatePageLinks(
-  element: Element | Document | DocumentFragment = document
-): Navigo {
-  const self = this;
+  const linkElement: EventTarget & { href?: string; target?: string } =
+    e.target;
+  if (linkElement.target === '_blank') return;
 
-  if (!isWindowAvailable) return self;
+  const oldHref = location.href.replace(location.origin, '');
+  const newHref = linkElement.href;
+  if (newHref === void 0 || newHref === oldHref) return;
 
-  const links: NodeListOf<NavigoLink> = element.querySelectorAll(
-    DEFAULT_LINK_SELECTOR
+  history.pushState({}, '', newHref);
+
+  linkElement.dispatchEvent(
+    new PopStateEvent('popstate', { bubbles: true, composed: true })
   );
 
-  links.forEach(l => {
-    const link = l;
-    if (
-      link.getAttribute('data-navigo') === 'false' ||
-      link.getAttribute('target') === '_blank'
-    ) {
-      if (link.hasListenerAttached) {
-        link.removeEventListener('click', link.navigoHandler);
-      }
-      return;
-    }
-    if (!link.hasListenerAttached) {
-      link.hasListenerAttached = true;
-      link.navigoHandler = e => {
-        if (
-          ((<KeyboardEvent>e).ctrlKey || (<KeyboardEvent>e).metaKey) &&
-          (e.target as HTMLElement)?.tagName.toLowerCase() === 'a'
-        ) {
-          return false;
-        }
-        let location = link.getAttribute('href');
-        if (typeof location === 'undefined' || location === null) {
-          return false;
-        }
-        // handling absolute paths
-        if (location.match(/^(http|https)/) && typeof URL !== 'undefined') {
-          const u = new URL(location);
-          location = u.pathname + u.search;
-        }
-        const options = parseNavigateOptions(
-          link.getAttribute('data-navigo-options')
-        );
-
-        if (!self.destroyed) {
-          e.preventDefault();
-          const oldHref = window.location.href;
-          self.navigate(self._clean(location), options);
-          const newHref = window.location.href;
-
-          if (newHref !== oldHref) {
-            const routeChangeEvent = new CustomEvent('route-change', {
-              bubbles: true,
-              composed: true,
-              detail: { location },
-            });
-            link.dispatchEvent(routeChangeEvent);
-          }
-        }
-        return undefined;
-      };
-      link.addEventListener('click', link.navigoHandler);
-    }
-  });
-  return self;
-};
+  e.preventDefault();
+}

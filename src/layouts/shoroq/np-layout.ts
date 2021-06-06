@@ -1,4 +1,5 @@
 import '@spectrum-web-components/action-button/sp-action-button';
+import '@spectrum-web-components/progress-bar/sp-progress-bar.js';
 import { html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import '../../components/main/np-side-nav';
@@ -29,10 +30,13 @@ export class NpLayout extends LitElement {
     if (aside) aside.open = !aside.open;
   }
 
+  @state()
+  private progress = html``;
+
   // Router outlets. The router will update their content when needed according
   // to the chosen route.
   @state()
-  private headerOutlet = html`
+  private header = html`
     <np-header
       ><np-top-nav
         >${this.sideNavToggle}<slot
@@ -43,48 +47,60 @@ export class NpLayout extends LitElement {
   `;
 
   @state()
-  private asideOutlet = html`
-    <np-aside><np-side-nav></np-side-nav></np-aside>
-  `;
+  private aside = html` <np-aside><np-side-nav></np-side-nav></np-aside> `;
 
   @state()
-  private mainOutlet = html`<np-main></np-main>`;
+  private main = html``;
 
   @state()
-  private footerOutlet = html``;
+  private footer = html``;
 
   constructor() {
     super();
-    // Setup the routing.
-    router.on('/', () => {
-      this.mainOutlet = html`<np-main>Home ...</np-main>`;
-    });
-    router.on('/blog', () => {
-      this.mainOutlet = html`<np-main>Blog ...</np-main>`;
-    });
-    router.on('/docs', () => {
-      this.mainOutlet = html`<np-main>Docs ...</np-main>`;
-    });
-    router.on('/guides', () => {
-      this.mainOutlet = html`<np-main>Guides ...</np-main>`;
-    });
-    router.on('/community', () => {
-      this.mainOutlet = html`<np-main>Community ...</np-main>`;
-    });
-    router.on('/about', () => {
-      this.mainOutlet = html`<np-main>About ...</np-main>`;
-    });
+    this.handleRouteChange();
+  }
 
-    router.resolve();
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('popstate', this.handleRouteChange);
+    window.addEventListener('start-progress', this.startProgress);
+    window.addEventListener('stop-progress', this.stopProgress);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('popstate', this.handleRouteChange);
+    window.removeEventListener('start-progress', this.startProgress);
+    window.removeEventListener('stop-progress', this.stopProgress);
+    super.disconnectedCallback();
   }
 
   render() {
     return html`
-      ${this.headerOutlet}
-      <div id="body">${this.asideOutlet}${this.mainOutlet}</div>
-      ${this.footerOutlet}
+      ${this.progress}${this.header}
+      <div id="body">${this.aside}<np-main>${this.main}</np-main></div>
+      ${this.footer}
     `;
   }
+
+  private handleRouteChange = async () => {
+    const pathname = location.href.replace(location.origin, '');
+    this.startProgress();
+    const data = await router.resolve({ pathname });
+    this.stopProgress();
+
+    if (data?.header) this.header = html`${data.header}`;
+    if (data?.aside) this.aside = html`${data.aside}`;
+    if (data?.main) this.main = html`${data.main}`;
+    if (data?.footer) this.footer = html`${data.footer}`;
+  };
+
+  private startProgress = () => {
+    this.progress = html`<sp-progress-bar indeterminate></sp-progress-bar>`;
+  };
+
+  private stopProgress = () => {
+    this.progress = html``;
+  };
 }
 
 declare global {

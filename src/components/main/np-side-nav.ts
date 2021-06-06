@@ -1,30 +1,33 @@
+import type { SideNavItem } from '@spectrum-web-components/sidenav';
 import '@spectrum-web-components/sidenav/sp-sidenav-item.js';
 import '@spectrum-web-components/sidenav/sp-sidenav.js';
 import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import { router } from '../../router';
+import { customElement, queryAll } from 'lit/decorators.js';
+import { handleSpaLink } from '../../router';
 
 @customElement('np-side-nav')
 export class NpSideNav extends LitElement {
-  firstUpdated() {
-    const sideNavItems = this.renderRoot.querySelectorAll('sp-sidenav-item');
-    if (sideNavItems) {
-      const routeChangeHandler = () => {
-        sideNavItems.forEach(item => {
-          const i = item;
-          i.selected =
-            i.href === window.location.href.replace(window.location.origin, '');
-        });
-      };
-      window.addEventListener('route-change', routeChangeHandler);
-      window.addEventListener('popstate', routeChangeHandler);
-      window.addEventListener('load', routeChangeHandler);
-    }
+  @queryAll('sp-sidenav-item')
+  spSideNavItems: SideNavItem[] | undefined;
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('popstate', this.routeChangeHandler);
+    window.addEventListener('load', this.routeChangeHandler);
   }
 
-  updated() {
-    router.updatePageLinks(this.renderRoot);
+  disconnectedCallback() {
+    window.removeEventListener('popstate', this.routeChangeHandler);
+    window.removeEventListener('load', this.routeChangeHandler);
+    super.disconnectedCallback();
   }
+
+  private routeChangeHandler = () => {
+    this.spSideNavItems?.forEach(item => {
+      const i = item;
+      i.selected = i.href === location.href.replace(location.origin, '');
+    });
+  };
 
   render() {
     return html`
@@ -33,19 +36,19 @@ export class NpSideNav extends LitElement {
           value="Docs"
           label="Docs"
           href="/docs"
-          data-navigo
+          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Guides"
           label="Guides"
           href="/guides"
-          data-navigo
+          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Community"
           label="Community"
           href="/community"
-          data-navigo
+          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Releases"
@@ -58,19 +61,19 @@ export class NpSideNav extends LitElement {
           value="About"
           label="About"
           href="/about"
-          data-navigo
+          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Home"
           label="Home"
           href="/"
-          data-navigo
+          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Blog"
           label="Blog"
           href="/blog"
-          data-navigo
+          @click=${handleSpaLink}
         ></sp-sidenav-item>
       </sp-sidenav>
     `;

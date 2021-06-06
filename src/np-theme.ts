@@ -2,13 +2,12 @@ import '@spectrum-web-components/field-label/sp-field-label.js';
 import '@spectrum-web-components/menu/sp-menu-item.js';
 import type { Picker } from '@spectrum-web-components/picker';
 import '@spectrum-web-components/picker/sp-picker.js';
-import '@spectrum-web-components/progress-circle/sp-progress-circle.js';
 import type { Color } from '@spectrum-web-components/theme';
 import '@spectrum-web-components/theme/scale-medium.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import type { PropertyValues } from 'lit';
 import { html, LitElement } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { until } from 'lit/directives/until.js';
 import './layouts/shoroq/np-layout';
 import styles from './np-theme.css';
@@ -42,18 +41,11 @@ export class NpTheme extends LitElement {
   }
 
   render() {
-    // Theme loading progress indicator.
-    const loadingProgress = html`<sp-progress-circle
-      label="Loading theme"
-      indeterminate
-      size="small"
-    ></sp-progress-circle>`;
-
     // Theme manager. Will be placed in its corresponding slot in the theme
     // children.
     const themeManager = html`<div slot="theme-manager" id="theme-manager">
       <sp-field-label for="theme-color" side-aligned="start">
-        ${this.loading ? loadingProgress : 'Theme'}
+        Theme
       </sp-field-label>
       <sp-picker
         id="theme-color"
@@ -101,15 +93,11 @@ export class NpTheme extends LitElement {
   // Array to keep track of loaded theme colors.
   private loadedThemeColors: Color[] = [];
 
-  // Indicates whether a theme color is being loaded.
-  @state()
-  private loading = false;
-
   // Theme color loader.
   private async loadThemeColor(color: Color) {
     if (!this.loadedThemeColors.includes(color)) {
-      this.loading = true;
-      // await new Promise(res => setTimeout(res, 1000));
+      window.dispatchEvent(new Event('start-progress'));
+      await new Promise(res => setTimeout(res, 1000));
       switch (color) {
         case 'dark':
           await import('@spectrum-web-components/theme/theme-dark.js');
@@ -125,7 +113,7 @@ export class NpTheme extends LitElement {
           break;
         default:
       }
-      this.loading = false;
+      window.dispatchEvent(new Event('stop-progress'));
       this.loadedThemeColors.push(color);
     }
   }

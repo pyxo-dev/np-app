@@ -15,6 +15,14 @@ export default css`
     z-index: 10;
   }
 
+  sp-progress-bar {
+    --spectrum-progressbar-height: 1px;
+    --spectrum-progressbar-width: 100vw;
+    --spectrum-progressbar-m-indeterminate-duration: 4s;
+    position: fixed;
+    z-index: 20;
+  }
+
   @media screen and (min-width: 961px) {
     #side-nav-toggle {
       display: none;

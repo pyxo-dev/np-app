@@ -16,7 +16,7 @@ export default css`
   }
 
   sp-progress-bar {
-    --spectrum-progressbar-height: 1px;
+    --spectrum-progressbar-height: 2px;
     --spectrum-progressbar-width: 100vw;
     --spectrum-progressbar-m-indeterminate-duration: 4s;
     position: fixed;

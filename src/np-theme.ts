@@ -8,7 +8,6 @@ import '@spectrum-web-components/theme/sp-theme.js';
 import type { PropertyValues } from 'lit';
 import { html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { until } from 'lit/directives/until.js';
 import './layouts/shoroq/np-layout';
 import styles from './np-theme.css';
 
@@ -33,6 +32,14 @@ export class NpTheme extends LitElement {
   // Theme color.
   @property({ reflect: true })
   color: Color = DEFAULT_COLOR;
+
+  constructor() {
+    super();
+    // Load theme color.
+    this.loadThemeColor(this.color).then(() => {
+      this.requestUpdate();
+    });
+  }
 
   // Updates the theme color when the theme color picker is used.
   private updateColor(event: Event) {
@@ -61,26 +68,14 @@ export class NpTheme extends LitElement {
       </sp-picker>
     </div>`;
 
-    // Theme template.
-    const spTheme = html`<sp-theme color=${this.color} id="app">
-      <slot><np-layout>${themeManager}</np-layout></slot>
-    </sp-theme>`;
-
     // When no theme color has been loaded yet (initial app load), we render a
     // div with a loading indicator while waiting for the theme color to load.
     // This is to avoid having a FOUC (flash of unstyled content).
-    if (this.loadedThemeColors.length === 0) {
-      return html`
-        ${until(
-          this.loadThemeColor(this.color).then(() => spTheme),
-          html`<div id="theme-loader"><div id="spinner"></div></div>`
-        )}
-      `;
-    }
-
-    // If there is at least one theme color already loaded, we render the theme
-    // template.
-    return spTheme;
+    return this.loadedThemeColors.length === 0
+      ? html`<div id="theme-loader"><div id="spinner"></div></div>`
+      : html`<sp-theme color=${this.color} id="app">
+          <slot><np-layout>${themeManager}</np-layout></slot>
+        </sp-theme>`;
   }
 
   updated(changes: PropertyValues) {

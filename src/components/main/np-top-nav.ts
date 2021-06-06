@@ -10,19 +10,24 @@ export class NpTopNav extends LitElement {
   @query('sp-top-nav')
   spTopNav: TopNav | undefined;
 
+  constructor() {
+    super();
+    this.updateComplete.then(() => {
+      this.handleRouteChange();
+    });
+  }
+
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('popstate', this.routeChangeHandler);
-    window.addEventListener('load', this.routeChangeHandler);
+    window.addEventListener('popstate', this.handleRouteChange);
   }
 
   disconnectedCallback() {
-    window.removeEventListener('popstate', this.routeChangeHandler);
-    window.removeEventListener('load', this.routeChangeHandler);
+    window.removeEventListener('popstate', this.handleRouteChange);
     super.disconnectedCallback();
   }
 
-  private routeChangeHandler = () => {
+  private handleRouteChange = () => {
     if (this.spTopNav) this.spTopNav.selected = window.location.href;
   };
 

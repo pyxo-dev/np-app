@@ -21,6 +21,8 @@ export function handleSpaLink(e: Event) {
     e.target;
   if (linkElement.target === '_blank') return;
 
+  e.preventDefault();
+
   const oldHref = window.location.href.replace(window.location.origin, '');
   const newHref = linkElement.href;
   if (newHref === undefined || newHref === oldHref) return;
@@ -30,6 +32,4 @@ export function handleSpaLink(e: Event) {
   linkElement.dispatchEvent(
     new PopStateEvent('popstate', { bubbles: true, composed: true })
   );
-
-  e.preventDefault();
 }

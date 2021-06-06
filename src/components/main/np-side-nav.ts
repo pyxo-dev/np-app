@@ -8,26 +8,30 @@ import { handleSpaLink } from '../../router';
 @customElement('np-side-nav')
 export class NpSideNav extends LitElement {
   @queryAll('sp-sidenav-item')
-  spSideNavItems: SideNavItem[] | undefined;
+  sideNavItems: NodeListOf<SideNavItem> | undefined;
+
+  constructor() {
+    super();
+    this.updateComplete.then(() => {
+      this.handleRouteChange();
+    });
+  }
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('popstate', this.routeChangeHandler);
-    window.addEventListener('load', this.routeChangeHandler);
+    window.addEventListener('popstate', this.handleRouteChange);
   }
 
   disconnectedCallback() {
-    window.removeEventListener('popstate', this.routeChangeHandler);
-    window.removeEventListener('load', this.routeChangeHandler);
+    window.removeEventListener('popstate', this.handleRouteChange);
     super.disconnectedCallback();
   }
 
-  private routeChangeHandler = () => {
-    this.spSideNavItems?.forEach(item => {
-      const i = item;
-      i.selected =
-        i.href === window.location.href.replace(window.location.origin, '');
-    });
+  private handleRouteChange = () => {
+    if (!this.sideNavItems) return;
+    const path = window.location.href.replace(window.location.origin, '');
+    const activeItem = Array.from(this.sideNavItems).find(i => i.href === path);
+    activeItem?.click();
   };
 
   render() {

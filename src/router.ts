@@ -17,19 +17,18 @@ export function handleSpaLink(e: Event) {
 
   if (!e.target) return;
 
-  const linkElement: EventTarget & { href?: string; target?: string } =
-    e.target;
-  if (linkElement.target === '_blank') return;
+  const link: EventTarget & { href?: string; target?: string } = e.target;
+  if (link.target === '_blank') return;
 
   e.preventDefault();
 
   const oldHref = window.location.href.replace(window.location.origin, '');
-  const newHref = linkElement.href;
+  const newHref = link.href;
   if (newHref === undefined || newHref === oldHref) return;
 
   window.history.pushState({}, '', newHref);
 
-  linkElement.dispatchEvent(
+  link.dispatchEvent(
     new PopStateEvent('popstate', { bubbles: true, composed: true })
   );
 }

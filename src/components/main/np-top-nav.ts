@@ -2,7 +2,8 @@ import type { TopNav } from '@spectrum-web-components/top-nav';
 import '@spectrum-web-components/top-nav/sp-top-nav-item.js';
 import '@spectrum-web-components/top-nav/sp-top-nav.js';
 import { html, LitElement } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators/custom-element.js';
+import { query } from 'lit/decorators/query.js';
 import { handleSpaLink } from '../../router';
 
 @customElement('np-top-nav')

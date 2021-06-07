@@ -2,7 +2,8 @@ import type { SideNavItem } from '@spectrum-web-components/sidenav';
 import '@spectrum-web-components/sidenav/sp-sidenav-item.js';
 import '@spectrum-web-components/sidenav/sp-sidenav.js';
 import { html, LitElement } from 'lit';
-import { customElement, queryAll } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators/custom-element.js';
+import { queryAll } from 'lit/decorators/query-all.js';
 import { handleSpaLink } from '../../router';
 
 @customElement('np-side-nav')

@@ -1,7 +1,8 @@
 import '@spectrum-web-components/action-button/sp-action-button';
 import '@spectrum-web-components/progress-bar/sp-progress-bar.js';
 import { html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators/custom-element.js';
+import { state } from 'lit/decorators/state.js';
 import '../../components/main/np-side-nav';
 import '../../components/main/np-top-nav';
 import { router } from '../../router';

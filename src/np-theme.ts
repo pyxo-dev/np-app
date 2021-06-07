@@ -7,7 +7,8 @@ import '@spectrum-web-components/theme/scale-medium.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import type { PropertyValues } from 'lit';
 import { html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators/custom-element.js';
+import { property } from 'lit/decorators/property.js';
 import './layouts/shoroq/np-layout';
 import styles from './np-theme.css';
 

@@ -36,49 +36,38 @@ export class NpSideNav extends LitElement {
 
   render() {
     return html`
-      <sp-sidenav manage-tab-index defaultValue="Docs">
+      <sp-sidenav @click=${handleSpaLink} manage-tab-index defaultValue="Docs">
         <sp-sidenav-item
           value="Docs"
           label="Docs"
           href="/docs"
-          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Guides"
           label="Guides"
           href="/guides"
-          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Community"
           label="Community"
           href="/community"
-          @click=${handleSpaLink}
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="Releases"
           label="Releases"
           href="/release"
           target="_blank"
-          disabled
         ></sp-sidenav-item>
         <sp-sidenav-item
           value="About"
           label="About"
           href="/about"
-          @click=${handleSpaLink}
         ></sp-sidenav-item>
-        <sp-sidenav-item
-          value="Home"
-          label="Home"
-          href="/"
-          @click=${handleSpaLink}
-        ></sp-sidenav-item>
+        <sp-sidenav-item value="Home" label="Home" href="/"></sp-sidenav-item>
         <sp-sidenav-item
           value="Blog"
           label="Blog"
           href="/blog"
-          @click=${handleSpaLink}
         ></sp-sidenav-item>
       </sp-sidenav>
     `;

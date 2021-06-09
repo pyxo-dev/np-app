@@ -93,7 +93,6 @@ export class NpTheme extends LitElement {
   private async loadThemeColor(color: Color) {
     if (!this.loadedThemeColors.includes(color)) {
       window.dispatchEvent(new Event('start-progress'));
-      await new Promise(res => setTimeout(res, 1000));
       switch (color) {
         case 'dark':
           await import('@spectrum-web-components/theme/theme-dark.js');

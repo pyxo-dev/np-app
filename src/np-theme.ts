@@ -9,6 +9,8 @@ import type { PropertyValues } from 'lit';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
+import { query } from 'lit/decorators/query.js';
+import { fint, t } from './i18n/index.js';
 import './layouts/shoroq/np-layout';
 import styles from './np-theme.css';
 
@@ -34,49 +36,89 @@ export class NpTheme extends LitElement {
   @property({ reflect: true })
   color: Color = DEFAULT_COLOR;
 
+  @property({ reflect: true })
+  public dir: 'ltr' | 'rtl' = fint.conf.localesConf?.[fint.locale].rtl
+    ? 'rtl'
+    : 'ltr';
+
   constructor() {
     super();
     // Load theme color.
-    this.loadThemeColor(this.color).then(() => {
-      this.requestUpdate();
-    });
+    this.loadThemeColor(this.color).then(this._requestUpdate);
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('locale-set', this.handleLocaleSet);
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('locale-set', this.handleLocaleSet);
+    super.disconnectedCallback();
+  }
+
+  @query('#theme-color')
+  themeColorPicker: Picker | undefined;
+
+  private _requestUpdate = () => {
+    this.requestUpdate();
+  };
+
+  private handleLocaleSet = () => {
+    const dir = fint.conf.localesConf?.[fint.locale].rtl ? 'rtl' : 'ltr';
+    console.log(dir);
+    this.dir = dir;
+    document.dir = dir;
+    document.documentElement.lang = fint.locale;
+    this.requestUpdate();
+    this.updateComplete.then(() => {
+      if (this.themeColorPicker) {
+        this.themeColorPicker.value = '';
+        this.themeColorPicker.value = this.color;
+      }
+    });
+  };
+
   // Updates the theme color when the theme color picker is used.
-  private updateColor(event: Event) {
-    this.color = (event.target as Picker).value as Color;
+  private updateColor() {
+    this.color = this.themeColorPicker?.value as Color;
     this.loadThemeColor(this.color);
   }
 
   render() {
+    // When no theme color has been loaded yet (initial app load), we render a
+    // div with a loading indicator while waiting for the theme color to load.
+    // This is to avoid having a FOUC (flash of unstyled content).
+    // We also wait for the translation resources to be loaded.
+    if (
+      this.loadedThemeColors.length === 0 ||
+      !fint.loadedResources.global ||
+      !fint.loadedResources.global.includes(fint.locale)
+    ) {
+      return html`<div id="theme-loader"><div id="spinner"></div></div>`;
+    }
+
     // Theme manager. Will be placed in its corresponding slot in the theme
     // children.
     const themeManager = html`<div slot="theme-manager" id="theme-manager">
-      <sp-field-label for="theme-color" side-aligned="start">
-        Theme
-      </sp-field-label>
       <sp-picker
         id="theme-color"
         placement="bottom"
         quiet
+        size="s"
         value=${this.color}
         @change=${this.updateColor}
       >
-        <sp-menu-item value="lightest">Lightest</sp-menu-item>
-        <sp-menu-item value="light">Light</sp-menu-item>
-        <sp-menu-item value="dark">Dark</sp-menu-item>
-        <sp-menu-item value="darkest">Darkest</sp-menu-item>
+        <sp-menu-item value="lightest">${t('lightest')}</sp-menu-item>
+        <sp-menu-item value="light">${t('light')}</sp-menu-item>
+        <sp-menu-item value="dark">${t('dark')}</sp-menu-item>
+        <sp-menu-item value="darkest">${t('darkest')}</sp-menu-item>
       </sp-picker>
     </div>`;
 
-    // When no theme color has been loaded yet (initial app load), we render a
-    // div with a loading indicator while waiting for the theme color to load.
-    // This is to avoid having a FOUC (flash of unstyled content).
-    return this.loadedThemeColors.length === 0
-      ? html`<div id="theme-loader"><div id="spinner"></div></div>`
-      : html`<sp-theme color=${this.color} id="app">
-          <slot><np-layout>${themeManager}</np-layout></slot>
-        </sp-theme>`;
+    return html`<sp-theme dir=${this.dir} color=${this.color} id="app">
+      <slot><np-layout>${themeManager}</np-layout></slot>
+    </sp-theme>`;
   }
 
   updated(changes: PropertyValues) {

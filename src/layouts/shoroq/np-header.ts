@@ -7,7 +7,11 @@ export class NpHeader extends LitElement {
   static styles = styles;
 
   render() {
-    return html`<header><slot></slot></header> `;
+    return html`
+      <header>
+        <slot></slot>
+      </header>
+    `;
   }
 }
 

@@ -2,6 +2,7 @@ import '@spectrum-web-components/action-button/sp-action-button';
 import '@spectrum-web-components/progress-bar/sp-progress-bar.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
+import { property } from 'lit/decorators/property.js';
 import { state } from 'lit/decorators/state.js';
 import '../../components/main/np-side-nav';
 import '../../components/main/np-top-nav';
@@ -16,6 +17,12 @@ import './np-main';
 export class NpLayout extends LitElement {
   // css styles.
   static styles = styles;
+
+  @property({ type: Boolean, reflect: true }) headerClosed = false;
+
+  private toggleHeader() {
+    this.headerClosed = !this.headerClosed;
+  }
 
   private sideNavToggle = html`<sp-action-button
     slot="side-nav-toggle"
@@ -38,13 +45,15 @@ export class NpLayout extends LitElement {
   // to the chosen route.
   @state()
   private header = html`
-    <np-header
-      ><np-top-nav
-        >${this.sideNavToggle}<slot
-          name="theme-manager"
-          slot="theme-manager"
-        ></slot></np-top-nav
-    ></np-header>
+    <sp-action-button id="header-toggle" quiet @click=${this.toggleHeader}>
+      ⌵
+    </sp-action-button>
+    <np-header>
+      <np-top-nav>
+        ${this.sideNavToggle}
+        <slot name="theme-manager" slot="theme-manager"> </slot>
+      </np-top-nav>
+    </np-header>
   `;
 
   @state()

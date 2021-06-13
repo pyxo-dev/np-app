@@ -4,6 +4,7 @@
     "@open-wc/dev-server-hmr": "^0.1.2-next.0",
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "^2.5.33",
+    "@rollup/plugin-dynamic-import-vars": "^1.1.1",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
     "@web/dev-server": "^0.1.17",
@@ -38,6 +39,7 @@
   "author": "np-app",
   "license": "MIT",
   "dependencies": {
+    "@fluent/bundle": "^0.16.1",
     "@spectrum-web-components/action-button": "^0.5.0",
     "@spectrum-web-components/action-group": "^0.4.8",
     "@spectrum-web-components/action-menu": "^0.10.0",

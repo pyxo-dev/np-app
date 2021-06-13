@@ -1,8 +1,24 @@
 import { css } from 'lit';
 
 export default css`
+  :host([headerclosed]) {
+    --swc-header-height: 0;
+  }
+
+  #header-toggle {
+    position: fixed;
+    margin-inline-start: 50%;
+    rotate: 180deg;
+    z-index: 20;
+  }
+
+  :host([headerclosed]) #header-toggle {
+    rotate: 0deg;
+  }
+
   np-header {
-    min-height: var(--swc-header-height);
+    height: var(--swc-header-height);
+    overflow: hidden;
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
     display: flex;
     flex-direction: row;

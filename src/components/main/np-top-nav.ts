@@ -1,9 +1,12 @@
+import type { Picker } from '@spectrum-web-components/picker';
+import '@spectrum-web-components/picker/sp-picker.js';
 import type { TopNav } from '@spectrum-web-components/top-nav';
 import '@spectrum-web-components/top-nav/sp-top-nav-item.js';
 import '@spectrum-web-components/top-nav/sp-top-nav.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { query } from 'lit/decorators/query.js';
+import { fint } from '../../i18n/index.js';
 import { handleSpaLink } from '../../router';
 
 @customElement('np-top-nav')
@@ -32,7 +35,30 @@ export class NpTopNav extends LitElement {
     if (this.spTopNav) this.spTopNav.selected = window.location.href;
   };
 
+  private setLocale(event: Event) {
+    fint.setLocale((event.target as Picker).value);
+  }
+
   render() {
+    const localeSelector = html`<div
+      id="locale-selector"
+      style="margin-inline-end: 5px;"
+    >
+      <sp-picker
+        placement="bottom"
+        quiet
+        size="s"
+        value=${fint.locale}
+        @change=${this.setLocale}
+      >
+        ${fint.locales.map(
+          l => html`<sp-menu-item value=${l}>
+            ${fint.conf.localesConf?.[l]?.nativeName || l}
+          </sp-menu-item>`
+        )}
+      </sp-picker>
+    </div>`;
+
     return html`<sp-top-nav>
       <slot name="side-nav-toggle"></slot>
 
@@ -44,6 +70,7 @@ export class NpTopNav extends LitElement {
       >
 
       <slot name="theme-manager"></slot>
+      ${localeSelector}
     </sp-top-nav>`;
   }
 }

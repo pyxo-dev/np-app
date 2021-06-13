@@ -1,3 +1,4 @@
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import merge from 'deepmerge';
 // use createSpaConfig for bundling a Single Page App
 import { createSpaConfig } from '@open-wc/building-rollup';
@@ -35,4 +36,10 @@ export default merge(baseConfig, {
   moduleContext: {
     [require.resolve('focus-visible')]: 'window',
   },
+
+  plugins: [
+    dynamicImportVars({
+      exclude: 'node_modules/**',
+    }),
+  ],
 });

@@ -1,8 +1,8 @@
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 
-@customElement('np-full-loader')
-export class NpFullLoader extends LitElement {
+@customElement('np-full-page-loader')
+export class NpFullPageLoader extends LitElement {
   static styles = css`
     :host {
       display: flex;
@@ -49,6 +49,6 @@ export class NpFullLoader extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'np-full-loader': NpFullLoader;
+    'np-full-page-loader': NpFullPageLoader;
   }
 }

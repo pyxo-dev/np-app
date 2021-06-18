@@ -1,15 +1,19 @@
 import type { FintConf } from './fint.js';
 
 export default <FintConf>{
-  locales: ['ar', 'en'],
-  localesConf: {
+  langs: ['ar', 'en', 'tr'],
+  langsConf: {
     ar: {
       nativeName: 'العربية',
-      rtl: true,
+      dir: 'rtl',
     },
 
     en: {
       nativeName: 'English',
+    },
+
+    tr: {
+      nativeName: 'Türkçe',
     },
   },
 };

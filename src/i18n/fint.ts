@@ -1,13 +1,13 @@
 import { FluentBundle } from '@fluent/bundle';
 
-export interface FintLocaleConf {
+export interface FintLangConf {
   nativeName?: string;
-  rtl?: boolean;
+  dir?: 'rtl' | 'ltr';
 }
 
 export interface FintConf {
-  locales: [string, ...string[]];
-  localesConf?: Record<string, FintLocaleConf>;
+  langs: [string, ...string[]];
+  langsConf?: Record<string, FintLangConf>;
 }
 
 export interface FintBundles {
@@ -18,121 +18,134 @@ export interface FintLoadedResources {
   [namespace: string]: string[];
 }
 
+// Local storage key to use for saving the app language.
+const LS_LANG_KEY = 'np:lang';
+
 export class Fint {
   conf;
-  locales;
-  locale;
+
+  langs;
+
+  langsConf;
+
+  lang;
+
   bundles: FintBundles = {};
+
   loadedResources: FintLoadedResources = {};
+
   activeNamespaces = ['global'];
 
-  constructor(conf: FintConf, locale?: string) {
+  constructor(conf: FintConf, lang?: string) {
     // Validation
-    if (conf.locales.includes('')) {
-      throw `
-[Fint] The locales list cannot contain an empty string.
-`;
+    if (conf.langs.includes('')) {
+      throw new Error('The language list cannot contain an empty string.');
     }
 
-    if (conf.locales.length !== new Set(conf.locales).size) {
-      throw `
-[Fint] The locales list cannot contain duplicates.
-`;
+    if (conf.langs.length !== new Set(conf.langs).size) {
+      throw new Error('The language list cannot contain duplicates.');
     }
 
-    if (locale && !conf.locales.includes(locale)) {
-      console.warn(`
-[Fint] The provided locale is not in the app locales list and will be ignored.
-`);
+    if (lang && !conf.langs.includes(lang)) {
+      console.warn(
+        'The provided language is not in the app language list and will be ignored.'
+      );
     }
 
     this.conf = conf;
-    this.locales = conf.locales;
-    if (locale && conf.locales.includes(locale)) {
-      this.locale = locale;
-    } else {
-      this.locale = this.getInitialLocale();
-    }
-    window.localStorage.setItem('locale', this.locale);
+    this.langs = conf.langs;
+    this.langsConf = conf.langsConf;
+    this.lang =
+      lang && conf.langs.includes(lang) ? lang : this.getInitialLang();
 
-    this.setLocale(this.locale);
+    window.localStorage.setItem(LS_LANG_KEY, this.lang);
   }
 
-  async setLocale(locale: string) {
-    if (!this.locales.includes(locale)) {
-      console.error(`
-[Fint setLocale] The provided locale is not in the app locales list.
-`);
-      return this;
-    }
+  async changeLang(lang: string) {
+    if (lang === this.lang || !this._isLangValid(lang)) return this;
 
-    await Promise.all(
-      this.activeNamespaces.map(ns => this.loadResource(locale, ns))
-    );
-    this.locale = locale;
-    window.dispatchEvent(new Event('locale-set'));
-    window.localStorage.setItem('locale', this.locale);
+    await this.loadLangResources(lang);
+
+    this.lang = lang;
+    window.localStorage.setItem(LS_LANG_KEY, lang);
     return this;
   }
 
-  getInitialLocale() {
-    const prefixLocale = window.location.pathname.split('/')[1].toLowerCase();
-    if (prefixLocale) {
-      const locale = this.locales.find(l => l.toLowerCase() === prefixLocale);
-      if (locale) return locale;
+  getInitialLang() {
+    const prefixLang = window.location.pathname.split('/')[1].toLowerCase();
+    if (prefixLang) {
+      const lang = this.langs.find(l => l.toLowerCase() === prefixLang);
+      if (lang) return lang;
     }
 
-    const localStorageLocale = window.localStorage.getItem('locale');
-    if (localStorageLocale && this.locales.includes(localStorageLocale)) {
-      return localStorageLocale;
+    const localStorageLang = window.localStorage.getItem(LS_LANG_KEY);
+    if (localStorageLang && this.langs.includes(localStorageLang)) {
+      return localStorageLang;
     }
 
-    return this.locales[0];
+    return this.langs[0];
   }
 
-  async loadResource(locale: string, namespace = 'global') {
-    if (!this.locales.includes(locale)) {
-      console.error(`
-[Fint loadResource] The provided locale is not in the app locales list.
-`);
-      return;
+  async loadLangResources(lang: string) {
+    if (!this._isLangValid(lang)) return this;
+
+    await Promise.all(
+      this.activeNamespaces.map(ns => this.loadResource(lang, ns))
+    );
+    return this;
+  }
+
+  async loadResource(lang: string, namespace = 'global') {
+    if (!this.langs.includes(lang)) {
+      console.error('The provided language is not in the app language list.');
+      return this;
     }
     if (!namespace) {
-      console.error(`
-[Fint loadResource] The provided namespace cannot be empty.
-`);
-      return;
+      console.error('The provided namespace cannot be empty.');
+      return this;
     }
 
-    if (this.loadedResources[namespace]?.includes(locale)) return;
+    if (this.loadedResources[namespace]?.includes(lang)) return this;
 
     if (!this.bundles[namespace]) {
       this.bundles[namespace] = {};
-      this.locales.forEach(l => {
+      this.langs.forEach(l => {
         this.bundles[namespace][l] = new FluentBundle(l);
       });
     }
 
-    window.dispatchEvent(new Event('start-progress'));
-    // await new Promise(r => setTimeout(r, 1000));
     try {
       const { default: resource } = await import(
-        `./messages/${namespace}/${locale}.js`
+        `./msgs/${namespace}/${lang}.js`
       );
-      const errors = this.bundles[namespace][locale].addResource(resource);
-      if (errors?.length) {
-        errors.forEach(e =>
-          console.warn('[Fint loadResource] Error adding resource: ', e)
-        );
+      const errors = this.bundles[namespace][lang].addResource(resource);
+      if (errors.length) {
+        errors.forEach(err => console.warn('Error adding resource: ', err));
       }
 
       if (!this.loadedResources[namespace]) {
         this.loadedResources[namespace] = [];
       }
-      this.loadedResources[namespace].push(locale);
-    } catch (e) {
-      console.error('[Fint loadResource] Error loading resource: ', e);
+      this.loadedResources[namespace].push(lang);
+    } catch (err) {
+      console.error('Error loading resource: ', err);
     }
-    window.dispatchEvent(new Event('stop-progress'));
+    return this;
+  }
+
+  dir() {
+    return this.langsConf?.[this.lang]?.dir || 'ltr';
+  }
+
+  nativeName() {
+    return this.langsConf?.[this.lang]?.nativeName || this.lang;
+  }
+
+  private _isLangValid(lang: string) {
+    if (!this.langs.includes(lang)) {
+      console.error('The provided language is not in the app language list.');
+      return false;
+    }
+    return true;
   }
 }

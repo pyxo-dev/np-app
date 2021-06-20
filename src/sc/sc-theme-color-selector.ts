@@ -9,8 +9,8 @@ import { I18nController } from '../i18n/i18n-controller.js';
 import { tc } from '../i18n/index.js';
 import { DEFAULT_COLOR } from '../sc/sc-theme.js';
 
-@customElement('np-theme-color-selector')
-export class NpThemeColorSelector extends LitElement {
+@customElement('sc-theme-color-selector')
+export class ScThemeColorSelector extends LitElement {
   private _i18nController = new I18nController(this);
 
   private _selectColor(e: Event) {
@@ -46,6 +46,6 @@ export class NpThemeColorSelector extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'np-theme-color-selector': NpThemeColorSelector;
+    'sc-theme-color-selector': ScThemeColorSelector;
   }
 }

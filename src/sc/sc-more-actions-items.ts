@@ -1,10 +1,10 @@
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
-import './np-locale-selector';
-import './np-theme-color-picker';
+import './sc-lang-selector.js';
+import './sc-theme-color-selector.js';
 
-@customElement('np-more-actions-items')
-export class NpMoreActionsItems extends LitElement {
+@customElement('sc-more-actions-items')
+export class ScMoreActionsItems extends LitElement {
   static styles = css`
     :host > * + * {
       margin-inline-start: var(--spectrum-global-dimension-size-400);
@@ -13,14 +13,14 @@ export class NpMoreActionsItems extends LitElement {
 
   render() {
     return html`
-      <np-theme-color-picker></np-theme-color-picker>
-      <np-locale-picker></np-locale-picker>
+      <sc-theme-color-selector></sc-theme-color-selector>
+      <sc-lang-selector></sc-lang-selector>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'np-more-actions-items': NpMoreActionsItems;
+    'sc-more-actions-items': ScMoreActionsItems;
   }
 }

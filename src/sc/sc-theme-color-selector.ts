@@ -2,19 +2,24 @@ import '@spectrum-web-components/field-label/sp-field-label.js';
 import '@spectrum-web-components/menu/sp-menu-item.js';
 import type { Picker } from '@spectrum-web-components/picker';
 import '@spectrum-web-components/picker/sp-picker.js';
+import type { Color } from '@spectrum-web-components/theme';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
-import { tc } from '../../i18n/index.js';
-import { DEFAULT_COLOR } from '../../np-theme.js';
+import { I18nController } from '../i18n/i18n-controller.js';
+import { tc } from '../i18n/index.js';
+import { DEFAULT_COLOR } from '../sc/sc-theme.js';
 
-@customElement('np-theme-color-picker')
-export class NpThemeColorPicker extends LitElement {
-  private _updateThemeColor(e: Event) {
+@customElement('np-theme-color-selector')
+export class NpThemeColorSelector extends LitElement {
+  private _i18nController = new I18nController(this);
+
+  private _selectColor(e: Event) {
+    const color = (e.target as Picker).value as Color;
     this.dispatchEvent(
-      new CustomEvent('np:theme-color-update', {
+      new CustomEvent('np:theme:colorselection', {
         bubbles: true,
         composed: true,
-        detail: { color: (e.target as Picker).value },
+        detail: { color },
       })
     );
   }
@@ -28,7 +33,7 @@ export class NpThemeColorPicker extends LitElement {
         id="theme-color-picker"
         quiet
         value=${DEFAULT_COLOR}
-        @change=${this._updateThemeColor}
+        @change=${this._selectColor}
       >
         <sp-menu-item value="lightest">${tc('lightest')}</sp-menu-item>
         <sp-menu-item value="light">${tc('light')}</sp-menu-item>
@@ -41,6 +46,6 @@ export class NpThemeColorPicker extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'np-theme-color-picker': NpThemeColorPicker;
+    'np-theme-color-selector': NpThemeColorSelector;
   }
 }

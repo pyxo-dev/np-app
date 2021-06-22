@@ -110,7 +110,15 @@ export class ScTheme extends LitElement {
       const detail = { id: `load theme color: ${color}` };
       window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
       // await new Promise(r => setTimeout(r, 1500));
-      await import(`@spectrum-web-components/theme/theme-${color}.js`);
+      if (color === 'lightest') {
+        await import('@spectrum-web-components/theme/theme-lightest.js');
+      } else if (color === 'light') {
+        await import('@spectrum-web-components/theme/theme-light.js');
+      } else if (color === 'dark') {
+        await import('@spectrum-web-components/theme/theme-dark.js');
+      } else {
+        await import('@spectrum-web-components/theme/theme-darkest.js');
+      }
       window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
       this._loadedThemeColors.push(color);
     }

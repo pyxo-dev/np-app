@@ -9,8 +9,6 @@ import './sc-main.js';
 export class ScLayout extends LitElement {
   static styles = css`
     :host {
-      --transition-duration: 300ms;
-
       min-height: 100vh;
       overflow: hidden;
 
@@ -22,11 +20,6 @@ export class ScLayout extends LitElement {
     :host > #header {
       grid-column: 1 / -1;
       grid-row: 1 / 2;
-      height: var(--spectrum-global-dimension-size-600);
-      transition: var(--transition-duration);
-    }
-    :host > #header.closed {
-      margin-top: calc(-1 * var(--spectrum-global-dimension-size-600));
     }
 
     :host > #main {

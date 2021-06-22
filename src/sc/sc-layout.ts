@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
+import { router } from '../router.js';
 import './header/sc-header.js';
 import './sc-footer.js';
 import './sc-main.js';
@@ -45,9 +46,37 @@ export class ScLayout extends LitElement {
 
   @property({ attribute: false }) footer = this.defaultFooter;
 
+  constructor() {
+    super();
+    this.handleRouting();
+  }
+
   render() {
     return html`${this.header}${this.main}${this.footer}`;
   }
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('popstate', this.handleRouting);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('popstate', this.handleRouting);
+  }
+
+  private handleRouting = async () => {
+    const pathname = window.location.href.replace(window.location.origin, '');
+
+    const detail = { id: `resolve route: ${pathname}` };
+    window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
+    const data = await router.resolve({ pathname });
+    window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
+
+    this.header = data?.header ? html`${data.header}` : this.defaultHeader;
+    this.main = data?.main ? html`${data.main}` : this.defaultMain;
+    this.footer = data?.footer ? html`${data.footer}` : this.defaultFooter;
+  };
 }
 
 declare global {

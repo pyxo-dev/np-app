@@ -1,6 +1,7 @@
 import '@spectrum-web-components/action-button/sp-action-button';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-chevron-up.js';
 import '@spectrum-web-components/progress-bar/sp-progress-bar.js';
-import { html, LitElement } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
 import { state } from 'lit/decorators/state.js';
@@ -10,20 +11,10 @@ import { router } from '../../router';
 import './np-aside';
 import './np-footer';
 import './np-header';
-import styles from './np-layout.css';
 import './np-main';
 
 @customElement('np-layout')
 export class NpLayout extends LitElement {
-  // css styles.
-  static styles = styles;
-
-  @property({ type: Boolean, reflect: true }) headerClosed = false;
-
-  private toggleHeader() {
-    this.headerClosed = !this.headerClosed;
-  }
-
   private sideNavToggle = html`<sp-action-button
     slot="side-nav-toggle"
     id="side-nav-toggle"
@@ -45,19 +36,56 @@ export class NpLayout extends LitElement {
   // to the chosen route.
   @state()
   private header = html`
-    <sp-action-button id="header-toggle" quiet @click=${this.toggleHeader}>
-      ⌵
+    <sp-action-button id="top-nav-toggle" quiet @click=${this._toggleTopNav}>
+      <sp-icon-chevron-up></sp-icon-chevron-up>
     </sp-action-button>
-    <np-header>
-      <np-top-nav>
-        ${this.sideNavToggle}
-        <slot name="theme-manager" slot="theme-manager"> </slot>
-      </np-top-nav>
-    </np-header>
+    <np-top-nav></np-top-nav>
+  `;
+
+  @property({ type: Boolean, reflect: true }) topNavClosed = false;
+
+  private _toggleTopNav() {
+    this.topNavClosed = !this.topNavClosed;
+  }
+
+  static styles = css`
+    :host {
+      --transition-duration: 300ms;
+
+      display: flex;
+    }
+    #top-nav-toggle {
+      margin: auto;
+      height: var(--spectrum-global-dimension-size-50);
+      transform: translateY(var(--spectrum-global-dimension-size-50));
+      z-index: 20;
+      transition: transform var(--transition-duration);
+    }
+    :host([topNavClosed]) #top-nav-toggle {
+      transform: rotateX(180deg);
+    }
+    np-top-nav {
+      position: absolute;
+      width: 100%;
+      transition: transform var(--transition-duration);
+    }
+    :host([topNavClosed]) np-top-nav {
+      transform: translateY(
+        calc(-1 * var(--spectrum-global-dimension-size-600))
+      );
+    }
+    #body {
+      position: absolute;
+      width: 100%;
+      transition: transform var(--transition-duration);
+    }
+    :host(:not([topNavClosed])) #body {
+      transform: translateY(var(--spectrum-global-dimension-size-600));
+    }
   `;
 
   @state()
-  private aside = html` <np-aside><np-side-nav></np-side-nav></np-aside> `;
+  private aside = html`<np-aside><np-side-nav></np-side-nav></np-aside>`;
 
   @state()
   private main = html``;

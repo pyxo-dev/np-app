@@ -1,14 +1,14 @@
 import '@spectrum-web-components/action-bar/sp-action-bar.js';
 import '@spectrum-web-components/action-button/sp-action-button.js';
-import '@spectrum-web-components/icons-workflow/icons/sp-icon-more.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-user-admin.js';
 import '@spectrum-web-components/underlay/sp-underlay.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
-import './sc-more-actions-items.js';
+import './sc-user-settings-items.js';
 
-@customElement('sc-more-actions')
-export class ScMoreActions extends LitElement {
+@customElement('sc-user-settings')
+export class ScUserSettings extends LitElement {
   static styles = css`
     sp-action-bar {
       position: absolute;
@@ -30,11 +30,11 @@ export class ScMoreActions extends LitElement {
     return html`
       <sp-underlay ?open=${this.open} @click=${this.hide}></sp-underlay>
       <sp-action-button @click=${this.show} quiet>
-        <sp-icon-more></sp-icon-more>
+        <sp-icon-user-admin></sp-icon-user-admin>
       </sp-action-button>
 
       <sp-action-bar ?open=${this.open}>
-        <sc-more-actions-items></sc-more-actions-items>
+        <sc-user-settings-items></sc-user-settings-items>
       </sp-action-bar>
     `;
   }
@@ -42,6 +42,6 @@ export class ScMoreActions extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sc-more-actions': ScMoreActions;
+    'sc-user-settings': ScUserSettings;
   }
 }

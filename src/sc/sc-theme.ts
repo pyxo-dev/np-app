@@ -4,17 +4,16 @@ import '@spectrum-web-components/theme/sp-theme.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
-import { state } from 'lit/decorators/state.js';
 import { fint } from '../i18n/index.js';
 import '../np/np-full-page-loader.js';
 import './sc-layout.js';
-import './sc-progress-bar.js';
+import './sc-progress.js';
 
 // Local storage key to use for the theme color.
-const LS_THEME_COLOR_KEY = 'np:sc-theme-color';
+const LS_THEME_COLOR_KEY = 'np:theme-color';
 // Determine the fallback color using the client preference.
 const COLOR_FALLBACK = matchMedia('(prefers-color-scheme: dark)').matches
-  ? 'dark'
+  ? 'darkest'
   : 'light';
 // Get the theme color to use.
 export const DEFAULT_COLOR = (
@@ -41,8 +40,8 @@ export class ScTheme extends LitElement {
     }
 
     sp-theme {
-      min-height: 100%;
       background-color: var(--spectrum-global-color-gray-100);
+      color: var(--spectrum-global-color-gray-800);
     }
   `;
 
@@ -50,56 +49,58 @@ export class ScTheme extends LitElement {
 
   @property({ reflect: true }) dir = fint.dir();
 
-  // Tracks async operations which are in progress.
-  private _opsInProgress = new Set<string>();
-
-  @state() private _opsInProgressCount = 0;
-
   constructor() {
     super();
     this._loadThemeColor(this.color).then(() => this.requestUpdate());
-    this.addEventListener('np:themecolorselection', this._handleColorSelection);
-    this.addEventListener('np:progressstart', this.handleProgressStart);
-    this.addEventListener('np:progressend', this.handleProgressEnd);
   }
 
-  render() {
-    if (
-      this._loadedThemeColors.length === 0 ||
-      // No global translation messages loaded yet.
-      !fint.loadedResources.global ||
-      // Global translation messages for the current locale not loaded yet.
-      !fint.loadedResources.global.includes(fint.lang)
-    ) {
-      return html`<np-full-page-loader></np-full-page-loader>`;
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener(
+      'np:theme:colorselection',
+      this._handleColorSelection
+    );
+    if (!fint.ready) {
+      window.addEventListener('np:i18n:fintready', this._handleFintReady, {
+        once: true,
+      });
     }
+    window.addEventListener('np:i18n:dirchange', this._handleDirChange);
+  }
 
-    const progress = this._opsInProgressCount
-      ? html`<sc-progress-bar></sc-progress-bar>`
-      : '';
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener(
+      'np:theme:colorselection',
+      this._handleColorSelection
+    );
+    window.removeEventListener('np:i18n:fintready', this._handleFintReady);
+    window.removeEventListener('np:i18n:dirchange', this._handleDirChange);
+  }
 
-    return html`
-      <sp-theme dir=${this.dir} color=${this.color}>
-        ${progress}
-        <sc-layout></sc-layout>
-      </sp-theme>
-    `;
+  private _handleFintReady = () => {
+    this.requestUpdate();
+  };
+
+  private _handleDirChange = () => {
+    this.dir = fint.dir();
+  };
+
+  render() {
+    return this._loadedThemeColors.length && fint.ready
+      ? html`
+          <sp-theme dir=${this.dir} color=${this.color}>
+            <sc-progress></sc-progress>
+            <sc-layout></sc-layout>
+          </sp-theme>
+        `
+      : html`<np-full-page-loader></np-full-page-loader>`;
   }
 
   private _handleColorSelection = (e: CustomEvent) => {
     this.color = e.detail.color;
     this._loadThemeColor(this.color);
-    window.localStorage?.setItem(LS_THEME_COLOR_KEY, this.color);
-  };
-
-  handleProgressStart = (e: CustomEvent) => {
-    this._opsInProgress.add(e.detail.id);
-    this._opsInProgressCount = this._opsInProgress.size;
-  };
-
-  handleProgressEnd = (e: CustomEvent) => {
-    this._opsInProgress.delete(e.detail.id);
-    this._opsInProgressCount = this._opsInProgress.size;
+    window.localStorage.setItem(LS_THEME_COLOR_KEY, this.color);
   };
 
   private _loadedThemeColors: Color[] = [];
@@ -107,9 +108,10 @@ export class ScTheme extends LitElement {
   private async _loadThemeColor(color: Color) {
     if (!this._loadedThemeColors.includes(color)) {
       const detail = { id: `load theme color: ${color}` };
-      this.handleProgressStart(new CustomEvent('np:progressstart', { detail }));
+      window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
+      // await new Promise(r => setTimeout(r, 1500));
       await import(`@spectrum-web-components/theme/theme-${color}.js`);
-      this.handleProgressEnd(new CustomEvent('np:progressend', { detail }));
+      window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
       this._loadedThemeColors.push(color);
     }
   }
@@ -120,9 +122,7 @@ declare global {
     'sc-theme': ScTheme;
   }
 
-  interface HTMLElementEventMap {
-    'np:themecolorselection': CustomEvent;
-    'np:progressstart': CustomEvent;
-    'np:progressend': CustomEvent;
+  interface WindowEventMap {
+    'np:theme:colorselection': CustomEvent;
   }
 }

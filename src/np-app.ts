@@ -1,11 +1,11 @@
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
-import './np/np-lang.js';
+import './sc/sc-theme.js';
 
 @customElement('np-app')
 export class NpApp extends LitElement {
   render() {
-    return html`<np-lang></np-lang>`;
+    return html`<sc-theme></sc-theme>`;
   }
 }
 

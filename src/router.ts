@@ -12,19 +12,20 @@ const routes: Routes = [
 
 export const router = new UniversalRouter(routes);
 
-export function handleSpaLink(e: Event) {
+export function handleLink(e: Event) {
   if ((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) return;
 
   if (!e.target) return;
 
   const link: EventTarget & { href?: string; target?: string } = e.target;
-  if (link.target === '_blank') return;
+  if (link.href === undefined || link.target === '_blank') return;
 
   e.preventDefault();
 
   const oldHref = window.location.href.replace(window.location.origin, '');
-  const newHref = link.href;
-  if (newHref === undefined || newHref === oldHref) return;
+  const newHref = link.href.startsWith('/') ? link.href : `/${link.href}`;
+
+  if (newHref === oldHref) return;
 
   window.history.pushState({}, '', newHref);
 

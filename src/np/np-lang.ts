@@ -27,11 +27,10 @@ export class NpLang extends LitElement {
   }
 
   private async _changeLang(lang: string) {
-    const theme = this.scTheme;
     const detail = { id: `change lang: ${lang}` };
-    theme?.handleProgressStart(new CustomEvent('np:progressstart', { detail }));
+    window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
     await fint.changeLang(lang);
-    theme?.handleProgressEnd(new CustomEvent('np:progressend', { detail }));
+    window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
 
     this.dir = fint.dir();
 

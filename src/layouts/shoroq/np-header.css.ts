@@ -1,7 +1,3 @@
 import { css } from 'lit';
 
-export default css`
-  header {
-    width: 100%;
-  }
-`;
+export default css``;

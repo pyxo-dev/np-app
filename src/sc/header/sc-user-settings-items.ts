@@ -3,11 +3,11 @@ import { customElement } from 'lit/decorators/custom-element.js';
 import './sc-lang-selector.js';
 import './sc-theme-color-selector.js';
 
-@customElement('sc-more-actions-items')
-export class ScMoreActionsItems extends LitElement {
+@customElement('sc-user-settings-items')
+export class ScUserSettingsItems extends LitElement {
   static styles = css`
-    :host > * + * {
-      margin-inline-start: var(--spectrum-global-dimension-size-400);
+    :host > * {
+      margin-inline: var(--spectrum-global-dimension-size-200);
     }
   `;
 
@@ -21,6 +21,6 @@ export class ScMoreActionsItems extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sc-more-actions-items': ScMoreActionsItems;
+    'sc-user-settings-items': ScUserSettingsItems;
   }
 }

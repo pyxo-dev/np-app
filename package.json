@@ -40,17 +40,22 @@
   "license": "MIT",
   "dependencies": {
     "@fluent/bundle": "^0.16.1",
+    "@spectrum-web-components/action-bar": "^0.2.9",
     "@spectrum-web-components/action-button": "^0.5.0",
-    "@spectrum-web-components/action-group": "^0.4.8",
+    "@spectrum-web-components/action-group": "^0.4.9",
     "@spectrum-web-components/action-menu": "^0.10.0",
-    "@spectrum-web-components/avatar": "^0.7.5",
+    "@spectrum-web-components/avatar": "^0.7.6",
     "@spectrum-web-components/button": "^0.14.0",
     "@spectrum-web-components/button-group": "^0.6.6",
+    "@spectrum-web-components/dialog": "^0.6.10",
+    "@spectrum-web-components/divider": "^0.2.5",
+    "@spectrum-web-components/field-group": "^0.3.5",
     "@spectrum-web-components/field-label": "^0.5.0",
-    "@spectrum-web-components/icon": "^0.9.6",
     "@spectrum-web-components/icons-workflow": "^0.6.6",
     "@spectrum-web-components/menu": "^0.8.6",
+    "@spectrum-web-components/overlay": "^0.11.7",
     "@spectrum-web-components/picker": "^0.5.0",
+    "@spectrum-web-components/popover": "^0.9.9",
     "@spectrum-web-components/progress-bar": "^0.3.0",
     "@spectrum-web-components/sidenav": "^0.10.1",
     "@spectrum-web-components/switch": "^0.7.7",
@@ -70,6 +75,7 @@
       "@typescript-eslint"
     ],
     "rules": {
+      "no-console": "off",
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error"

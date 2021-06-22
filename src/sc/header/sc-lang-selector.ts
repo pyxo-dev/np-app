@@ -4,23 +4,21 @@ import type { Picker } from '@spectrum-web-components/picker';
 import '@spectrum-web-components/picker/sp-picker.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
-import { I18nController } from '../i18n/i18n-controller.js';
-import { fint, tc } from '../i18n/index.js';
+import { I18nController } from '../../i18n/i18n-controller.js';
+import { fint, tc } from '../../i18n/index.js';
+
+function selectLang(e: Event) {
+  const lang = (e.target as Picker).value;
+  window.dispatchEvent(
+    new CustomEvent('np:i18n:langselection', {
+      detail: { lang },
+    })
+  );
+}
 
 @customElement('sc-lang-selector')
 export class ScLangSelector extends LitElement {
   private _i18nController = new I18nController(this);
-
-  private _selectLang(e: Event) {
-    const lang = (e.target as Picker).value;
-    this.dispatchEvent(
-      new CustomEvent('np:i18n:langselection', {
-        bubbles: true,
-        composed: true,
-        detail: { lang },
-      })
-    );
-  }
 
   render() {
     return html`
@@ -31,7 +29,7 @@ export class ScLangSelector extends LitElement {
         id="lang-picker"
         quiet
         value=${fint.lang}
-        @change=${this._selectLang}
+        @change=${selectLang}
       >
         ${fint.langs.map(
           l => html`

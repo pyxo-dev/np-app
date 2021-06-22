@@ -4,7 +4,7 @@ import '@spectrum-web-components/sidenav/sp-sidenav.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { queryAll } from 'lit/decorators/query-all.js';
-import { handleSpaLink } from '../../router';
+import { handleLink } from '../../router';
 
 @customElement('np-side-nav')
 export class NpSideNav extends LitElement {
@@ -37,7 +37,7 @@ export class NpSideNav extends LitElement {
 
   render() {
     return html`
-      <sp-sidenav @click=${handleSpaLink} manage-tab-index defaultValue="Docs">
+      <sp-sidenav @click=${handleLink} manage-tab-index defaultValue="Docs">
         <sp-sidenav-item
           value="Docs"
           label="Docs"

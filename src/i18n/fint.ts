@@ -36,6 +36,8 @@ export class Fint {
 
   activeNamespaces = ['global'];
 
+  ready = false;
+
   constructor(conf: FintConf, lang?: string) {
     // Validation
     if (conf.langs.includes('')) {
@@ -58,18 +60,54 @@ export class Fint {
     this.lang =
       lang && conf.langs.includes(lang) ? lang : this.getInitialLang();
 
-    window.localStorage.setItem(LS_LANG_KEY, this.lang);
+    this.initLang(this.lang).then(lng => {
+      if (lng) {
+        this.ready = true;
+        window.dispatchEvent(new Event('np:i18n:fintready'));
+      }
+    });
+
+    window.addEventListener('np:i18n:langselection', this._handleLangSelection);
+  }
+
+  async initLang(lang: string) {
+    if (!this._isLangValid(lang)) return undefined;
+
+    const detail = { id: `load lang resources: ${lang}` };
+    window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
+    // await new Promise(r => setTimeout(r, 1500));
+    await this.loadLangResources(lang);
+    window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
+
+    this.lang = lang;
+
+    document.documentElement.lang = this.lang;
+    document.dir = this.dir();
+
+    return lang;
   }
 
   async changeLang(lang: string) {
-    if (lang === this.lang || !this._isLangValid(lang)) return this;
+    if (lang === this.lang) return lang;
 
-    await this.loadLangResources(lang);
+    const oldDir = this.dir();
 
-    this.lang = lang;
-    window.localStorage.setItem(LS_LANG_KEY, lang);
-    return this;
+    const result = await this.initLang(lang);
+    if (!result) return undefined;
+
+    window.dispatchEvent(new Event('np:i18n:langchange'));
+    if (oldDir !== this.dir()) {
+      window.dispatchEvent(new Event('np:i18n:dirchange'));
+    }
+
+    return lang;
   }
+
+  private _handleLangSelection = async (e: CustomEvent) => {
+    if (await this.changeLang(e.detail.lang)) {
+      window.localStorage.setItem(LS_LANG_KEY, this.lang);
+    }
+  };
 
   getInitialLang() {
     const prefixLang = window.location.pathname.split('/')[1].toLowerCase();
@@ -87,25 +125,28 @@ export class Fint {
   }
 
   async loadLangResources(lang: string) {
-    if (!this._isLangValid(lang)) return this;
+    if (!this._isLangValid(lang)) return undefined;
 
-    await Promise.all(
+    const results = await Promise.allSettled(
       this.activeNamespaces.map(ns => this.loadResource(lang, ns))
     );
-    return this;
+
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        console.error('Error loading resource: ', result.reason);
+      }
+    }
+    return lang;
   }
 
   async loadResource(lang: string, namespace = 'global') {
-    if (!this.langs.includes(lang)) {
-      console.error('The provided language is not in the app language list.');
-      return this;
-    }
+    if (!this._isLangValid(lang)) return undefined;
     if (!namespace) {
       console.error('The provided namespace cannot be empty.');
-      return this;
+      return undefined;
     }
 
-    if (this.loadedResources[namespace]?.includes(lang)) return this;
+    if (this.loadedResources[namespace]?.includes(lang)) return lang;
 
     if (!this.bundles[namespace]) {
       this.bundles[namespace] = {};
@@ -127,18 +168,20 @@ export class Fint {
         this.loadedResources[namespace] = [];
       }
       this.loadedResources[namespace].push(lang);
+
+      return lang;
     } catch (err) {
       console.error('Error loading resource: ', err);
+      return undefined;
     }
-    return this;
   }
 
-  dir() {
-    return this.langsConf?.[this.lang]?.dir || 'ltr';
+  dir(lang = this.lang) {
+    return this.langsConf?.[lang]?.dir || 'ltr';
   }
 
-  nativeName() {
-    return this.langsConf?.[this.lang]?.nativeName || this.lang;
+  nativeName(lang = this.lang) {
+    return this.langsConf?.[lang]?.nativeName || lang;
   }
 
   private _isLangValid(lang: string) {
@@ -147,5 +190,11 @@ export class Fint {
       return false;
     }
     return true;
+  }
+}
+
+declare global {
+  interface WindowEventMap {
+    'np:i18n:langselection': CustomEvent;
   }
 }

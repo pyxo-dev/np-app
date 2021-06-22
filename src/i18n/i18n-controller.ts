@@ -9,11 +9,11 @@ export class I18nController implements ReactiveController {
   }
 
   hostConnected() {
-    window.addEventListener('np:langchange', this._requestHostUpdate);
+    window.addEventListener('np:i18n:langchange', this._requestHostUpdate);
   }
 
   hostDisconnected() {
-    window.removeEventListener('np:langchange', this._requestHostUpdate);
+    window.removeEventListener('np:i18n:langchange', this._requestHostUpdate);
   }
 
   private _requestHostUpdate = () => {

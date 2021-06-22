@@ -1,15 +1,22 @@
 import { FluentResource } from '@fluent/bundle';
 
 export default new FluentResource(`
+## Content: Header
+
+docs = دليل الاستخدام
+tutorial = درس تعليمي
+blog = المدونة
+
 ## Theme
 
-theme-color-picker-label = اللون
 lightest = جد فاتح
 light = فاتح
 dark = داكن
 darkest = جد داكن
 
-## I18n
+## Header
 
-locale-picker-label = اللغة
+header-tabs-picker-label = انتقل إلى
+language-picker-label = اللغة
+theme-color-picker-label = اللون
 `);

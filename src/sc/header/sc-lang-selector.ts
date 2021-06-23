@@ -9,11 +9,7 @@ import { fint, tc } from '../../i18n/index.js';
 
 function selectLang(e: Event) {
   const lang = (e.target as Picker).value;
-  window.dispatchEvent(
-    new CustomEvent('np:i18n:langselection', {
-      detail: { lang },
-    })
-  );
+  fint.changeLang(lang);
 }
 
 @customElement('sc-lang-selector')

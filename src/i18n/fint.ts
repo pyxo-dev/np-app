@@ -66,8 +66,6 @@ export class Fint {
         window.dispatchEvent(new Event('np:i18n:fintready'));
       }
     });
-
-    window.addEventListener('np:i18n:langselection', this._handleLangSelection);
   }
 
   async initLang(lang: string) {
@@ -95,6 +93,8 @@ export class Fint {
     const result = await this.initLang(lang);
     if (!result) return undefined;
 
+    window.localStorage.setItem(LS_LANG_KEY, this.lang);
+
     window.dispatchEvent(new Event('np:i18n:langchange'));
     if (oldDir !== this.dir()) {
       window.dispatchEvent(new Event('np:i18n:dirchange'));
@@ -102,12 +102,6 @@ export class Fint {
 
     return lang;
   }
-
-  private _handleLangSelection = async (e: CustomEvent) => {
-    if (await this.changeLang(e.detail.lang)) {
-      window.localStorage.setItem(LS_LANG_KEY, this.lang);
-    }
-  };
 
   getInitialLang() {
     const prefixLang = window.location.pathname.split('/')[1].toLowerCase();
@@ -190,11 +184,5 @@ export class Fint {
       return false;
     }
     return true;
-  }
-}
-
-declare global {
-  interface WindowEventMap {
-    'np:i18n:langselection': CustomEvent;
   }
 }

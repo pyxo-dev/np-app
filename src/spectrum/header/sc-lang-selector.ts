@@ -9,14 +9,14 @@ import { fint } from '../../i18n/i18n.js';
 import { tc } from '../../i18n/utils.js';
 import { goto } from '../../router/utils.js';
 
-function changeLang(e: Event) {
+function handleChange(e: Event) {
   const lang = (e.target as Picker).value;
   goto(lang);
 }
 
 @customElement('sc-lang-selector')
 export class ScLangSelector extends LitElement {
-  private _i18nController = new I18nController(this);
+  private i18nController = new I18nController(this);
 
   render() {
     return html`
@@ -27,7 +27,7 @@ export class ScLangSelector extends LitElement {
         id="lang-picker"
         quiet
         value=${fint.lang}
-        @change=${changeLang}
+        @change=${handleChange}
       >
         ${fint.langs.map(
           l => html`

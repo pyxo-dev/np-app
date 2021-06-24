@@ -82,7 +82,7 @@ export class Fint {
   });
 
   async initLang(lang: string) {
-    if (!this._isLangValid(lang)) return undefined;
+    if (!this.isLangValid(lang)) return undefined;
 
     await this.loadLangResources(lang);
 
@@ -128,7 +128,7 @@ export class Fint {
   }
 
   async loadLangResources(lang: string) {
-    if (!this._isLangValid(lang)) return undefined;
+    if (!this.isLangValid(lang)) return undefined;
 
     const results = await Promise.allSettled(
       this.activeNamespaces.map(ns => this.loadResource(lang, ns))
@@ -143,7 +143,7 @@ export class Fint {
   }
 
   async loadResource(lang: string, namespace = 'global') {
-    if (!this._isLangValid(lang)) return undefined;
+    if (!this.isLangValid(lang)) return undefined;
     if (!namespace) {
       console.error('The provided namespace cannot be empty.');
       return undefined;
@@ -167,15 +167,16 @@ export class Fint {
       );
       window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
 
+      if (!this.loadedResources[namespace]) {
+        this.loadedResources[namespace] = [];
+      }
+
+      if (this.loadedResources[namespace]?.includes(lang)) return lang;
+      this.loadedResources[namespace].push(lang);
       const errors = this.bundles[namespace][lang].addResource(resource);
       if (errors.length) {
         errors.forEach(err => console.warn('Error adding resource: ', err));
       }
-
-      if (!this.loadedResources[namespace]) {
-        this.loadedResources[namespace] = [];
-      }
-      this.loadedResources[namespace].push(lang);
 
       return lang;
     } catch (err) {
@@ -193,7 +194,7 @@ export class Fint {
     return this.langsConf?.[lang]?.nativeName || lang;
   }
 
-  private _isLangValid(lang: string) {
+  private isLangValid(lang: string) {
     if (!this.langs.includes(lang)) {
       console.error('The provided language is not in the app language list.');
       return false;

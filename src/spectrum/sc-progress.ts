@@ -19,36 +19,36 @@ export class ScProgress extends LitElement {
   `;
 
   // Tracks async operations which are in progress.
-  private _opsInProgress = new Set<string>();
+  private opsInProgress = new Set<string>();
 
-  @state() private _opsInProgressCount = 0;
+  @state() private opsInProgressCount = 0;
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('np:progressstart', this._handleProgressStart);
-    window.addEventListener('np:progressend', this._handleProgressEnd);
+    window.addEventListener('np:progressstart', this.handleProgressStart);
+    window.addEventListener('np:progressend', this.handleProgressEnd);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('np:progressstart', this._handleProgressStart);
-    window.removeEventListener('np:progressend', this._handleProgressEnd);
+    window.removeEventListener('np:progressstart', this.handleProgressStart);
+    window.removeEventListener('np:progressend', this.handleProgressEnd);
   }
 
   render() {
-    return this._opsInProgressCount
+    return this.opsInProgressCount
       ? html`<sp-progress-bar indeterminate></sp-progress-bar>`
       : '';
   }
 
-  private _handleProgressStart = (e: CustomEvent) => {
-    this._opsInProgress.add(e.detail.id);
-    this._opsInProgressCount = this._opsInProgress.size;
+  private handleProgressStart = (e: CustomEvent) => {
+    this.opsInProgress.add(e.detail.id);
+    this.opsInProgressCount = this.opsInProgress.size;
   };
 
-  private _handleProgressEnd = (e: CustomEvent) => {
-    this._opsInProgress.delete(e.detail.id);
-    this._opsInProgressCount = this._opsInProgress.size;
+  private handleProgressEnd = (e: CustomEvent) => {
+    this.opsInProgress.delete(e.detail.id);
+    this.opsInProgressCount = this.opsInProgress.size;
   };
 }
 

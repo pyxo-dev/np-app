@@ -7,9 +7,9 @@ import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { I18nController } from '../../i18n/i18n-controller.js';
 import { tc } from '../../i18n/utils.js';
-import { DEFAULT_COLOR } from '../sc-theme.js';
+import { DEFAULT_COLOR } from '../theme/utils.js';
 
-function selectColor(e: Event) {
+function handleChange(e: Event) {
   const color = (e.target as Picker).value as Color;
   window.dispatchEvent(
     new CustomEvent('np:theme:colorselection', {
@@ -20,7 +20,7 @@ function selectColor(e: Event) {
 
 @customElement('sc-theme-color-selector')
 export class ScThemeColorSelector extends LitElement {
-  private _i18nController = new I18nController(this);
+  private i18nController = new I18nController(this);
 
   render() {
     return html`
@@ -31,7 +31,7 @@ export class ScThemeColorSelector extends LitElement {
         id="theme-color-picker"
         quiet
         value=${DEFAULT_COLOR}
-        @change=${selectColor}
+        @change=${handleChange}
       >
         <sp-menu-item value="lightest">${tc('lightest')}</sp-menu-item>
         <sp-menu-item value="light">${tc('light')}</sp-menu-item>

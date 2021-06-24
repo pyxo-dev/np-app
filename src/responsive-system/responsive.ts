@@ -1,4 +1,4 @@
-export const Bp = { XXS: 0, XS: 1, S: 2, M: 3, L: 4, XL: 5 };
+export const BP = { XXS: 0, XS: 1, S: 2, M: 3, L: 4, XL: 5 };
 
 export const WIDTH_QUERY_LISTS = [
   window.matchMedia('(max-width: 303px)'), // XXS
@@ -23,7 +23,7 @@ export class Responsive {
       WIDTH_QUERY_LISTS[b].addEventListener('change', () => {
         if (WIDTH_QUERY_LISTS[b].matches) {
           this.breakpoint = b;
-          window.dispatchEvent(new Event('np:responsive:breakpointchange'));
+          window.dispatchEvent(new Event('np:responsive:bpchange'));
         }
       });
     });

@@ -2,9 +2,9 @@ import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
 import { router } from '../router/router.js';
+import './footer/sc-footer.js';
 import './header/sc-header.js';
-import './sc-footer.js';
-import './sc-main.js';
+import './main/sc-main.js';
 
 @customElement('sc-layout')
 export class ScLayout extends LitElement {

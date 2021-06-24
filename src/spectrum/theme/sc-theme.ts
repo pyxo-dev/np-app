@@ -4,23 +4,11 @@ import '@spectrum-web-components/theme/sp-theme.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
-import { fint } from '../i18n/i18n.js';
-import '../np/np-full-page-loader.js';
-import './sc-layout.js';
-import './sc-progress.js';
-
-// Local storage key to use for the theme color.
-const LS_THEME_COLOR_KEY = 'np:theme-color';
-// Determine the fallback color using the client preference.
-const COLOR_FALLBACK = matchMedia('(prefers-color-scheme: dark)').matches
-  ? 'darkest'
-  : 'light';
-// Get the theme color to use.
-export const DEFAULT_COLOR = (
-  window.localStorage
-    ? window.localStorage.getItem(LS_THEME_COLOR_KEY) || COLOR_FALLBACK
-    : COLOR_FALLBACK
-) as Color;
+import { fint } from '../../i18n/i18n.js';
+import '../../np/np-full-page-loader.js';
+import '../sc-layout.js';
+import '../sc-progress.js';
+import { DEFAULT_COLOR, LS_THEME_COLOR_KEY } from './utils.js';
 
 @customElement('sc-theme')
 export class ScTheme extends LitElement {
@@ -51,34 +39,12 @@ export class ScTheme extends LitElement {
 
   constructor() {
     super();
-    this._loadThemeColor(this.color).then(() => this.requestUpdate());
+    this.loadThemeColor(this.color).then(() => this.requestUpdate());
     fint.initComplete.then(() => this.requestUpdate());
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    window.addEventListener(
-      'np:theme:colorselection',
-      this._handleColorSelection
-    );
-    window.addEventListener('np:i18n:dirchange', this._handleDirChange);
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    window.removeEventListener(
-      'np:theme:colorselection',
-      this._handleColorSelection
-    );
-    window.removeEventListener('np:i18n:dirchange', this._handleDirChange);
-  }
-
-  private _handleDirChange = () => {
-    this.dir = fint.dir();
-  };
-
   render() {
-    return this._loadedThemeColors.length && fint.ready
+    return this.loadedThemeColors.length && fint.ready
       ? html`
           <sp-theme dir=${this.dir} color=${this.color}>
             <sc-progress></sc-progress>
@@ -88,16 +54,38 @@ export class ScTheme extends LitElement {
       : html`<np-full-page-loader></np-full-page-loader>`;
   }
 
-  private _handleColorSelection = (e: CustomEvent) => {
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener(
+      'np:theme:colorselection',
+      this.handleColorSelection
+    );
+    window.addEventListener('np:i18n:dirchange', this.handleDirChange);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener(
+      'np:theme:colorselection',
+      this.handleColorSelection
+    );
+    window.removeEventListener('np:i18n:dirchange', this.handleDirChange);
+  }
+
+  private handleColorSelection = (e: CustomEvent) => {
     this.color = e.detail.color;
-    this._loadThemeColor(this.color);
+    this.loadThemeColor(this.color);
     window.localStorage.setItem(LS_THEME_COLOR_KEY, this.color);
   };
 
-  private _loadedThemeColors: Color[] = [];
+  private handleDirChange = () => {
+    this.dir = fint.dir();
+  };
 
-  private async _loadThemeColor(color: Color) {
-    if (!this._loadedThemeColors.includes(color)) {
+  private loadedThemeColors: Color[] = [];
+
+  private async loadThemeColor(color: Color) {
+    if (!this.loadedThemeColors.includes(color)) {
       const detail = { id: `load theme color: ${color}` };
       window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
       // await new Promise(r => setTimeout(r, 1500));
@@ -111,7 +99,7 @@ export class ScTheme extends LitElement {
         await import('@spectrum-web-components/theme/theme-darkest.js');
       }
       window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
-      this._loadedThemeColors.push(color);
+      this.loadedThemeColors.push(color);
     }
   }
 }

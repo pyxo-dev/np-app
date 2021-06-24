@@ -1,4 +1,4 @@
-import { FluentVariable } from '@fluent/bundle';
+import type { FluentVariable } from '@fluent/bundle';
 import { fint } from './i18n.js';
 
 /*

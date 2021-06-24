@@ -5,11 +5,13 @@ import '@spectrum-web-components/picker/sp-picker.js';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { I18nController } from '../../i18n/i18n-controller.js';
-import { fint, tc } from '../../i18n/index.js';
+import { fint } from '../../i18n/i18n.js';
+import { tc } from '../../i18n/utils.js';
+import { goto } from '../../router/utils.js';
 
-function selectLang(e: Event) {
+function changeLang(e: Event) {
   const lang = (e.target as Picker).value;
-  fint.changeLang(lang);
+  goto(lang);
 }
 
 @customElement('sc-lang-selector')
@@ -25,7 +27,7 @@ export class ScLangSelector extends LitElement {
         id="lang-picker"
         quiet
         value=${fint.lang}
-        @change=${selectLang}
+        @change=${changeLang}
       >
         ${fint.langs.map(
           l => html`

@@ -4,7 +4,7 @@ import '@spectrum-web-components/theme/sp-theme.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
-import { fint } from '../i18n/index.js';
+import { fint } from '../i18n/i18n.js';
 import '../np/np-full-page-loader.js';
 import './sc-layout.js';
 import './sc-progress.js';
@@ -52,6 +52,7 @@ export class ScTheme extends LitElement {
   constructor() {
     super();
     this._loadThemeColor(this.color).then(() => this.requestUpdate());
+    fint.initComplete.then(() => this.requestUpdate());
   }
 
   connectedCallback() {
@@ -60,11 +61,6 @@ export class ScTheme extends LitElement {
       'np:theme:colorselection',
       this._handleColorSelection
     );
-    if (!fint.ready) {
-      window.addEventListener('np:i18n:fintready', this._handleFintReady, {
-        once: true,
-      });
-    }
     window.addEventListener('np:i18n:dirchange', this._handleDirChange);
   }
 
@@ -74,13 +70,8 @@ export class ScTheme extends LitElement {
       'np:theme:colorselection',
       this._handleColorSelection
     );
-    window.removeEventListener('np:i18n:fintready', this._handleFintReady);
     window.removeEventListener('np:i18n:dirchange', this._handleDirChange);
   }
-
-  private _handleFintReady = () => {
-    this.requestUpdate();
-  };
 
   private _handleDirChange = () => {
     this.dir = fint.dir();

@@ -1,9 +1,9 @@
-import type { FluentVariable } from '@fluent/bundle';
-import conf from './conf.js';
-import { Fint } from './fint.js';
+import { FluentVariable } from '@fluent/bundle';
+import { fint } from './i18n.js';
 
-export const fint = new Fint(conf);
-
+/*
+ * Translate.
+ */
 export function t(
   id: string,
   args?: Record<string, FluentVariable> | null,
@@ -18,12 +18,28 @@ export function t(
   return '';
 }
 
-// Capitalize.
+/*
+ * Capitalize.
+ */
 export function c(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Translate and capitalize.
+/*
+ * Translate and capitalize.
+ */
 export function tc(...args: Parameters<typeof t>) {
   return c(t(...args));
+}
+
+/**
+ * Path translate.
+ */
+export function pt(
+  id: string,
+  lang?: string,
+  args?: Record<string, FluentVariable> | null,
+  errors?: Array<Error> | null
+) {
+  return encodeURI(t(id, args, 'paths', lang, errors));
 }

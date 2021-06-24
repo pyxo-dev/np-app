@@ -6,7 +6,7 @@ import type { Color } from '@spectrum-web-components/theme';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { I18nController } from '../../i18n/i18n-controller.js';
-import { tc } from '../../i18n/index.js';
+import { tc } from '../../i18n/utils.js';
 import { DEFAULT_COLOR } from '../sc-theme.js';
 
 function selectColor(e: Event) {

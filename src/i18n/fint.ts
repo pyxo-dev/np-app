@@ -34,7 +34,7 @@ export class Fint {
 
   loadedResources: FintLoadedResources = {};
 
-  activeNamespaces = ['global'];
+  activeNamespaces = ['global', 'paths'];
 
   ready = false;
 
@@ -57,8 +57,7 @@ export class Fint {
     this.conf = conf;
     this.langs = conf.langs;
     this.langsConf = conf.langsConf;
-    this.lang =
-      lang && conf.langs.includes(lang) ? lang : this.getInitialLang();
+    this.lang = lang && conf.langs.includes(lang) ? lang : this.getAppLang();
 
     this.initLang(this.lang).then(lng => {
       if (lng) {
@@ -66,16 +65,26 @@ export class Fint {
         window.dispatchEvent(new Event('np:i18n:fintready'));
       }
     });
+
+    window.addEventListener('popstate', () =>
+      this.changeLang(this.getAppLang())
+    );
   }
+
+  initComplete: Promise<boolean> = new Promise(resolve => {
+    if (this.ready) {
+      resolve(true);
+    } else {
+      window.addEventListener('np:i18n:fintready', () => resolve(true), {
+        once: true,
+      });
+    }
+  });
 
   async initLang(lang: string) {
     if (!this._isLangValid(lang)) return undefined;
 
-    const detail = { id: `load lang resources: ${lang}` };
-    window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
-    // await new Promise(r => setTimeout(r, 1500));
     await this.loadLangResources(lang);
-    window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
 
     this.lang = lang;
 
@@ -103,7 +112,7 @@ export class Fint {
     return lang;
   }
 
-  getInitialLang() {
+  getAppLang() {
     const prefixLang = window.location.pathname.split('/')[1].toLowerCase();
     if (prefixLang) {
       const lang = this.langs.find(l => l.toLowerCase() === prefixLang);
@@ -149,10 +158,15 @@ export class Fint {
       });
     }
 
+    const detail = { id: `load lang resource: ${lang} ${namespace}` };
     try {
+      window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
+      // await new Promise(r => setTimeout(r, 500));
       const { default: resource } = await import(
         `./msgs/${namespace}/${lang}.js`
       );
+      window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
+
       const errors = this.bundles[namespace][lang].addResource(resource);
       if (errors.length) {
         errors.forEach(err => console.warn('Error adding resource: ', err));
@@ -165,6 +179,7 @@ export class Fint {
 
       return lang;
     } catch (err) {
+      window.dispatchEvent(new CustomEvent('np:progressend', { detail }));
       console.error('Error loading resource: ', err);
       return undefined;
     }

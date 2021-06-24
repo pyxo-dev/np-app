@@ -11,11 +11,12 @@ import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
 import { query } from 'lit/decorators/query.js';
 import { I18nController } from '../../i18n/i18n-controller.js';
-import { tc } from '../../i18n/index.js';
+import { fint } from '../../i18n/i18n.js';
+import { pt, tc } from '../../i18n/utils.js';
 import { BreakpointController } from '../../responsive/breakpoint-controller.js';
 import { responsive } from '../../responsive/index.js';
 import { Bp } from '../../responsive/responsive.js';
-import { handleLink } from '../../router.js';
+import { handleLink } from '../../router/utils.js';
 import './sc-user-settings.js';
 
 @customElement('sc-header')
@@ -31,16 +32,16 @@ export class ScHeader extends LitElement {
   private breakpointController = new BreakpointController(this);
 
   @property({ attribute: false }) tabItems = [
-    { content: 'docs', href: 'docs' },
-    { content: 'tutorial', href: 'tutorial' },
-    { content: 'blog', href: 'blog' },
+    { content: 'docs', pathId: 'docs' },
+    { content: 'tutorial', pathId: 'tutorial' },
+    { content: 'blog', pathId: 'blog' },
   ];
 
   render() {
     const tabsFullView = html`${this.tabItems.map(item => {
-      const href = item.href.startsWith('/') ? item.href : `/${item.href}`;
+      const href = `/${fint.lang}/${pt(item.pathId)}`;
       return html`
-        <sp-top-nav-item href=${href}>${tc(item.content)}</sp-top-nav-item>
+        <sp-top-nav-item href="${href}">${tc(item.content)}</sp-top-nav-item>
       `;
     })}`;
 
@@ -53,7 +54,7 @@ export class ScHeader extends LitElement {
         quiet
       >
         ${this.tabItems.map(item => {
-          const href = item.href.startsWith('/') ? item.href : `/${item.href}`;
+          const href = `/${fint.lang}/${pt(item.pathId)}`;
           return html`
             <sp-menu-item @click=${handleLink} value=${href} href=${href}
               >${tc(item.content)}</sp-menu-item

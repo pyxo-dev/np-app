@@ -4,7 +4,7 @@ import '@spectrum-web-components/top-nav/sp-top-nav-item.js';
 import '@spectrum-web-components/top-nav/sp-top-nav.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
-import { handleLink } from '../router.js';
+import { handleLink } from '../router/utils.js';
 import './header/sc-user-settings.js';
 
 @customElement('sc-top-nav')

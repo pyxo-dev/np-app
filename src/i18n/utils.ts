@@ -32,14 +32,51 @@ export function tc(...args: Parameters<typeof t>) {
   return c(t(...args));
 }
 
-/**
- * Path translate.
- */
-export function pt(
-  id: string,
+export function translatePathSegment(
+  segment: string,
   lang?: string,
   args?: Record<string, FluentVariable> | null,
   errors?: Array<Error> | null
 ) {
-  return encodeURI(t(id, args, 'paths', lang, errors));
+  return encodeURI(t(segment, args, 'paths', lang, errors));
+}
+
+/**
+ * Path translate.
+ */
+export function pt(path: string, lang?: string) {
+  const translatedSegments = path
+    .split('/')
+    .map(segment => translatePathSegment(segment, lang));
+
+  if (translatedSegments.includes('')) return '';
+
+  return translatedSegments.join('/');
+}
+
+export function getPathTranslations(path: string, langs?: string[]) {
+  const languages = langs || fint.langs;
+
+  const translations: Record<string, string> = {};
+
+  for (const lang of languages) {
+    const translation = pt(path, lang);
+    if (translation) translations[lang] = translation;
+  }
+
+  return translations;
+}
+
+export interface NpPathsTranslations {
+  [path: string]: {
+    [lang: string]: string;
+  };
+}
+
+export function getPathsTranslations(paths: string[], langs?: string[]) {
+  const pathsTranslations: NpPathsTranslations = {};
+  for (const path of paths) {
+    pathsTranslations[path] = getPathTranslations(path, langs);
+  }
+  return pathsTranslations;
 }

@@ -7,11 +7,22 @@ import { customElement } from 'lit/decorators/custom-element.js';
 import { I18nController } from '../../i18n/i18n-controller.js';
 import { fint } from '../../i18n/i18n.js';
 import { tc } from '../../i18n/utils.js';
+import { router } from '../../router/router.js';
 import { goto } from '../../router/utils.js';
 
-function handleChange(e: Event) {
+async function handleChange(e: Event) {
   const lang = (e.target as Picker).value;
-  goto(lang);
+
+  const pathname = window.location.href.replace(window.location.origin, '');
+  const data = await router.resolve({ pathname });
+
+  const translation = data?.meta?.translations?.[lang];
+
+  if (translation) {
+    goto(`${lang}/${translation}`);
+  } else {
+    goto(lang);
+  }
 }
 
 @customElement('sc-lang-selector')

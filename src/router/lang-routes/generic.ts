@@ -1,25 +1,47 @@
 import { html } from 'lit';
 import type { Routes } from 'universal-router';
 import { fint } from '../../i18n/i18n.js';
-import { pt, tc } from '../../i18n/utils';
-import type { NpLayoutParts } from '../routes.js';
+import { getPathsTranslations, pt, tc } from '../../i18n/utils.js';
+import type { NpRouteResult } from '../routes.js';
+
+// export async function getPathTranslations(ids: string[], langs?: string[]) {
+//   const languages = langs || fint.langs;
+//   await Promise.all(languages?.map(l => fint.loadResource(l, 'paths')));
+
+// }
 
 export async function getGenericLangRoutes(lang: string) {
-  await fint.loadResource(lang, 'paths');
+  await Promise.all(fint.langs.map(l => fint.loadResource(l, 'paths')));
 
-  const routes: Routes<NpLayoutParts> = [
+  const paths = ['docs', 'tutorial', 'blog'];
+  const translations = getPathsTranslations(paths, fint.langs);
+
+  const routes: Routes<NpRouteResult> = [
     { path: '', action: () => ({ main: html`♡ ${lang} ♡` }) },
+
     {
       path: `/${pt('docs')}`,
-      action: () => ({ main: html`${tc('docs')}` }),
+      action: () => ({
+        // Change to something like: html`<docs-component></docs-component>`
+        main: html`** ${tc('docs')} **`,
+        meta: { translations: translations.docs },
+      }),
     },
     {
       path: `/${pt('tutorial')}`,
-      action: () => ({ main: html`${tc('tutorial')}` }),
+      action: () => ({
+        // Change to something like: html`<tutorial-component></tutorial-component>`
+        main: html`-- ${tc('tutorial')} --`,
+        meta: { translations: translations.tutorial },
+      }),
     },
     {
       path: `/${pt('blog')}`,
-      action: () => ({ main: html`${tc('blog')}` }),
+      action: () => ({
+        // Change to something like: html`<blog-component></blog-component>`
+        main: html`|| ${tc('blog')} ||`,
+        meta: { translations: translations.blog },
+      }),
     },
   ];
 

@@ -1,5 +1,5 @@
 import type { Color } from '@spectrum-web-components/theme';
-import '@spectrum-web-components/theme/scale-medium.js';
+import '@spectrum-web-components/theme/scale-large.js';
 import '@spectrum-web-components/theme/sp-theme.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
@@ -13,10 +13,6 @@ import { DEFAULT_COLOR, LS_THEME_COLOR_KEY } from './utils.js';
 @customElement('sc-theme')
 export class ScTheme extends LitElement {
   static styles = css`
-    /*
-   * While the requested theme is still loading, its variables are not available,
-   * we use explicit values instead.
-   */
     np-full-page-loader {
       background-color: #fff;
     }
@@ -30,6 +26,7 @@ export class ScTheme extends LitElement {
     sp-theme {
       background-color: var(--spectrum-global-color-gray-100);
       color: var(--spectrum-global-color-gray-800);
+      --spectrum-global-font-family-base: var(--np-font-family-base);
     }
   `;
 
@@ -46,7 +43,7 @@ export class ScTheme extends LitElement {
   render() {
     return this.loadedThemeColors.length && fint.ready
       ? html`
-          <sp-theme dir=${this.dir} color=${this.color}>
+          <sp-theme dir=${this.dir} color=${this.color} scale="large">
             <sc-progress></sc-progress>
             <sc-layout></sc-layout>
           </sp-theme>

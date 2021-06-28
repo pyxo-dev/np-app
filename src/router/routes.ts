@@ -1,6 +1,7 @@
 import { html, TemplateResult } from 'lit';
 import type { Routes } from 'universal-router';
 import { fint } from '../i18n/i18n.js';
+import '../spectrum/main/sc-page.js';
 
 export interface NpRouteMeta {
   translations?: Record<string, string>;
@@ -15,7 +16,10 @@ export interface NpRouteResult {
 
 function getRootChildren() {
   const rootChildren: Routes<NpRouteResult> = [
-    { path: '', action: () => ({ main: html`Welcome | مرحبا` }) },
+    {
+      path: '',
+      action: () => ({ main: html`<sc-page>Welcome | مرحبا</sc-page>` }),
+    },
   ];
 
   for (const lang of fint.langs) {

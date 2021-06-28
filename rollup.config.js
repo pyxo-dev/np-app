@@ -1,7 +1,8 @@
-import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
-import merge from 'deepmerge';
 // use createSpaConfig for bundling a Single Page App
 import { createSpaConfig } from '@open-wc/building-rollup';
+import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
+import replace from '@rollup/plugin-replace';
+import merge from 'deepmerge';
 
 // use createBasicConfig to do regular JS to JS bundling
 // import { createBasicConfig } from '@open-wc/building-rollup';
@@ -38,6 +39,13 @@ export default merge(baseConfig, {
   },
 
   plugins: [
+    replace({
+      preventAssignment: true,
+      // setting "include" is important for performance
+      include: ['node_modules/@urql/core/**/*', 'node_modules/graphql/**/*'],
+      'process.env.NODE_ENV': '"production"',
+    }),
+
     dynamicImportVars({
       exclude: 'node_modules/**',
     }),

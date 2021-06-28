@@ -2,13 +2,9 @@ import { html } from 'lit';
 import type { Routes } from 'universal-router';
 import { fint } from '../../i18n/i18n.js';
 import { getPathsTranslations, pt, tc } from '../../i18n/utils.js';
+import '../../spectrum/blog/sc-blog-list.js';
+import '../../spectrum/main/sc-page.js';
 import type { NpRouteResult } from '../routes.js';
-
-// export async function getPathTranslations(ids: string[], langs?: string[]) {
-//   const languages = langs || fint.langs;
-//   await Promise.all(languages?.map(l => fint.loadResource(l, 'paths')));
-
-// }
 
 export async function getGenericLangRoutes(lang: string) {
   await Promise.all(fint.langs.map(l => fint.loadResource(l, 'paths')));
@@ -37,9 +33,8 @@ export async function getGenericLangRoutes(lang: string) {
     },
     {
       path: `/${pt('blog')}`,
-      action: () => ({
-        // Change to something like: html`<blog-component></blog-component>`
-        main: html`|| ${tc('blog')} ||`,
+      action: async () => ({
+        main: html`<sc-page><sc-blog-list></sc-blog-list></sc-page>`,
         meta: { translations: translations.blog },
       }),
     },

@@ -6,7 +6,7 @@ export class ScFooter extends LitElement {
   static styles = css``;
 
   render() {
-    return html`<div>Test footer</div>`;
+    return html`<div></div>`;
   }
 }
 

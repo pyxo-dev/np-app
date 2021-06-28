@@ -41,12 +41,12 @@ export class ScProgress extends LitElement {
       : '';
   }
 
-  private handleProgressStart = (e: CustomEvent) => {
+  private handleProgressStart = (e: CustomEvent<Record<'id', string>>) => {
     this.opsInProgress.add(e.detail.id);
     this.opsInProgressCount = this.opsInProgress.size;
   };
 
-  private handleProgressEnd = (e: CustomEvent) => {
+  private handleProgressEnd = (e: CustomEvent<Record<'id', string>>) => {
     this.opsInProgress.delete(e.detail.id);
     this.opsInProgressCount = this.opsInProgress.size;
   };

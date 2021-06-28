@@ -4,9 +4,13 @@ import '@spectrum-web-components/theme/sp-theme.js';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
+import { query } from 'lit/decorators/query.js';
+import { OpacityController } from '../../animation/OpacityController.js';
+import { ELEMENT_UPDATE_ANIMATION_DURATION } from '../../conf.js';
 import { fint } from '../../i18n/i18n.js';
 import '../../np/np-full-page-loader.js';
 import '../sc-layout.js';
+import type { ScLayout } from '../sc-layout.js';
 import '../sc-progress.js';
 import { DEFAULT_COLOR, LS_THEME_COLOR_KEY } from './utils.js';
 
@@ -44,8 +48,7 @@ export class ScTheme extends LitElement {
     return this.loadedThemeColors.length && fint.ready
       ? html`
           <sp-theme dir=${this.dir} color=${this.color} scale="large">
-            <sc-progress></sc-progress>
-            <sc-layout></sc-layout>
+            <sc-layout><sc-progress slot="progress"></sc-progress></sc-layout>
           </sp-theme>
         `
       : html`<np-full-page-loader></np-full-page-loader>`;
@@ -75,8 +78,16 @@ export class ScTheme extends LitElement {
     window.localStorage.setItem(LS_THEME_COLOR_KEY, this.color);
   };
 
+  @query('sc-layout') layout: ScLayout | undefined;
+
   private handleDirChange = () => {
-    this.dir = fint.dir();
+    if (this.layout) {
+      const dur = ELEMENT_UPDATE_ANIMATION_DURATION;
+      const opacityController = new OpacityController(this.layout, dur);
+      opacityController.animate(() => {
+        this.dir = fint.dir();
+      }, dur);
+    }
   };
 
   private loadedThemeColors: Color[] = [];

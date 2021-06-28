@@ -52,7 +52,9 @@ export class ScLayout extends LitElement {
   }
 
   render() {
-    return html`${this.header}${this.main}${this.footer}`;
+    return html`
+      <slot name="progress"></slot>${this.header}${this.main}${this.footer}
+    `;
   }
 
   connectedCallback() {

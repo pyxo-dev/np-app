@@ -24,6 +24,10 @@ import './sc-user-settings.js';
 @customElement('sc-header')
 export class ScHeader extends LitElement {
   static styles = css`
+    :host {
+      z-index: 1;
+    }
+
     sp-top-nav :last-child {
       margin-inline-start: auto;
     }

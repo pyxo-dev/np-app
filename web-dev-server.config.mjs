@@ -1,4 +1,8 @@
 import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
+import rollupReplace from '@rollup/plugin-replace';
+import { fromRollup } from '@web/dev-server-rollup';
+
+const replace = fromRollup(rollupReplace);
 
 /** Use Hot Module replacement by adding --hmr to the start command */
 const hmr = process.argv.includes('--hmr');
@@ -20,10 +24,17 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
   // },
 
   plugins: [
+    replace({
+      preventAssignment: true,
+      // setting "include" is important for performance
+      include: ['node_modules/@urql/core/**/*', 'node_modules/graphql/**/*'],
+      'process.env.NODE_ENV': '"development"',
+    }),
+
     /** Use Hot Module Replacement by uncommenting. Requires @open-wc/dev-server-hmr plugin */
     hmr &&
       hmrPlugin({
-        exclude: ['**/*/node_modules/**/*'],
+        exclude: ['node_modules/**/*'],
         presets: [presets.litElement],
       }),
   ],

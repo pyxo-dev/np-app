@@ -1,10 +1,14 @@
 export function goto(href: string) {
-  const oldHref = window.location.href.replace(window.location.origin, '');
-  const newHref = href.startsWith('/') ? href : `/${href}`;
+  const { origin } = window.location;
 
-  if (newHref === oldHref) return;
+  const oldPath = window.location.href.replace(origin, '');
 
-  window.history.pushState({}, '', newHref);
+  const _newPath = href.replace(origin, '');
+  const newPath = _newPath.startsWith('/') ? _newPath : `/${_newPath}`;
+
+  if (newPath === oldPath) return;
+
+  window.history.pushState({}, '', newPath);
 
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
@@ -12,12 +16,18 @@ export function goto(href: string) {
 export function handleLink(e: Event) {
   if ((e as KeyboardEvent).ctrlKey || (e as KeyboardEvent).metaKey) return;
 
-  if (!e.target) return;
+  const composedPath = e.composedPath();
+  const currentTargetIdx = composedPath.findIndex(el => el === e.currentTarget);
 
-  const link: EventTarget & { href?: string; target?: string } = e.target;
-  if (link.href === undefined || link.target === '_blank') return;
+  type Link = EventTarget & { href?: string; target?: string };
+
+  const link: Link | undefined = composedPath
+    .slice(0, currentTargetIdx + 1)
+    .find(el => (el as Link).href !== undefined);
+
+  if (!link || link?.target === '_blank') return;
 
   e.preventDefault();
 
-  goto(link.href);
+  goto(link.href as string);
 }

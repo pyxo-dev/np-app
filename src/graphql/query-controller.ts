@@ -56,10 +56,14 @@ export class QueryController<Data = any, Variables extends object = {}>
       client.query(this.opts.query, this.opts.variables, this.opts.context),
 
       onStart(() => {
-        this.result.fetching = true;
-        this.requestHostUpdate();
-        if (this.opts.progressEvent) {
-          window.dispatchEvent(new CustomEvent('np:progressstart', { detail }));
+        if (!this.result.data) {
+          this.result.fetching = true;
+          this.requestHostUpdate();
+          if (this.opts.progressEvent) {
+            window.dispatchEvent(
+              new CustomEvent('np:progressstart', { detail })
+            );
+          }
         }
       }),
 

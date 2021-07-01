@@ -2,7 +2,7 @@ import { html } from 'lit';
 import type { Routes } from 'universal-router';
 import { fint } from '../../i18n/i18n.js';
 import { getPathsTranslations, pt, tc } from '../../i18n/utils.js';
-import '../../spectrum/blog/sc-blog-list.js';
+import '../../spectrum/blog/sc-blog-post-lc-list.js';
 import '../../spectrum/main/sc-page.js';
 import type { NpRouteResult } from '../routes.js';
 
@@ -34,7 +34,11 @@ export async function getGenericLangRoutes(lang: string) {
     {
       path: `/${pt('blog')}`,
       action: async () => ({
-        main: html`<sc-page><sc-blog-list></sc-blog-list></sc-page>`,
+        main: html`
+          <sc-page>
+            <sc-blog-post-lc-list></sc-blog-post-lc-list>
+          </sc-page>
+        `,
         meta: { translations: translations.blog },
       }),
     },

@@ -1,7 +1,9 @@
 import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
 import rollupReplace from '@rollup/plugin-replace';
 import { fromRollup } from '@web/dev-server-rollup';
+import rollupPostcss from 'rollup-plugin-postcss';
 
+const postcss = fromRollup(rollupPostcss);
 const replace = fromRollup(rollupReplace);
 
 /** Use Hot Module replacement by adding --hmr to the start command */
@@ -23,12 +25,20 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
   //   exportConditions: ['browser', 'development']
   // },
 
+  mimeTypes: {
+    '**/*.css': 'js',
+  },
+
   plugins: [
     replace({
       preventAssignment: true,
       // setting "include" is important for performance
       include: ['node_modules/@urql/core/**/*', 'node_modules/graphql/**/*'],
       'process.env.NODE_ENV': '"development"',
+    }),
+
+    postcss({
+      plugins: [],
     }),
 
     /** Use Hot Module Replacement by uncommenting. Requires @open-wc/dev-server-hmr plugin */

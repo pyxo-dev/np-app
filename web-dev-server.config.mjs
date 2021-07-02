@@ -27,6 +27,7 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
 
   mimeTypes: {
     '**/*.css': 'js',
+    '**/*.scss': 'js',
   },
 
   plugins: [

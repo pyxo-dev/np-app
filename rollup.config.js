@@ -1,9 +1,11 @@
 // use createSpaConfig for bundling a Single Page App
 import { createSpaConfig } from '@open-wc/building-rollup';
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
 import replace from '@rollup/plugin-replace';
 import merge from 'deepmerge';
+import path from 'path';
 import postcss from 'rollup-plugin-postcss';
 
 // use createBasicConfig to do regular JS to JS bundling
@@ -46,6 +48,13 @@ export default merge(baseConfig, {
       // setting "include" is important for performance
       include: ['node_modules/@urql/core/**/*', 'node_modules/graphql/**/*'],
       'process.env.NODE_ENV': '"production"',
+    }),
+
+    alias({
+      entries: {
+        src: path.resolve('out-tsc', 'src'),
+        carbon: path.resolve('out-tsc', 'src/carbon'),
+      },
     }),
 
     commonjs(),

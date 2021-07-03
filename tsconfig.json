@@ -17,6 +17,11 @@
     "incremental": true,
 
     "skipLibCheck": true
+
+    "baseUrl": ".",
+    "paths": {
+      "carbon/*": ["./src/carbon/*"]
+    }
   },
   "include": ["**/*.ts"]
 }

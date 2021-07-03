@@ -4,6 +4,7 @@
     "@open-wc/dev-server-hmr": "^0.1.2-next.0",
     "@open-wc/eslint-config": "^4.3.0",
     "@open-wc/testing": "^2.5.33",
+    "@rollup/plugin-alias": "^3.1.2",
     "@rollup/plugin-dynamic-import-vars": "^1.1.1",
     "@rollup/plugin-replace": "^2.4.2",
     "@typescript-eslint/eslint-plugin": "^4.25.0",

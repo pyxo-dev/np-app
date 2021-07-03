@@ -1,10 +1,13 @@
 import { hmrPlugin, presets } from '@open-wc/dev-server-hmr';
+import rollupAlias from '@rollup/plugin-alias';
 import rollupReplace from '@rollup/plugin-replace';
 import { fromRollup } from '@web/dev-server-rollup';
+import path from 'path';
 import rollupPostcss from 'rollup-plugin-postcss';
 
-const postcss = fromRollup(rollupPostcss);
+const alias = fromRollup(rollupAlias);
 const replace = fromRollup(rollupReplace);
+const postcss = fromRollup(rollupPostcss);
 
 /** Use Hot Module replacement by adding --hmr to the start command */
 const hmr = process.argv.includes('--hmr');
@@ -36,6 +39,13 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
       // setting "include" is important for performance
       include: ['node_modules/@urql/core/**/*', 'node_modules/graphql/**/*'],
       'process.env.NODE_ENV': '"development"',
+    }),
+
+    alias({
+      entries: {
+        src: path.resolve('out-tsc', 'src'),
+        carbon: path.resolve('out-tsc', 'src/carbon'),
+      },
     }),
 
     postcss({

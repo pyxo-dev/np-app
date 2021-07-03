@@ -1,12 +1,12 @@
 export const BP = { XXS: 0, XS: 1, S: 2, M: 3, L: 4, XL: 5 };
 
 export const WIDTH_QUERY_LISTS = [
-  window.matchMedia('(max-width: 303px)'), // XXS
-  window.matchMedia('(min-width: 304px) and (max-width: 767px)'), // XS
-  window.matchMedia('(min-width: 768px) and (max-width: 1279px)'), // S
-  window.matchMedia('(min-width: 1280px) and (max-width: 1767px)'), // M
-  window.matchMedia('(min-width: 1768px ) and (max-width: 2159px)'), // L
-  window.matchMedia('(min-width: 2160px)'), // XL
+  window.matchMedia('(max-width: 319px)'), // XXS
+  window.matchMedia('(min-width: 320px) and (max-width: 671px)'), // XS
+  window.matchMedia('(min-width: 672px) and (max-width: 1055px)'), // S
+  window.matchMedia('(min-width: 1056px) and (max-width: 1311px)'), // M
+  window.matchMedia('(min-width: 1312px ) and (max-width: 1583px)'), // L
+  window.matchMedia('(min-width: 1584px)'), // XL
 ];
 
 export const BREAKPOINTS = [0, 1, 2, 3, 4, 5] as const;

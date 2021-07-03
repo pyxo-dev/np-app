@@ -1,16 +1,16 @@
 import { html, TemplateResult } from 'lit';
 import type { Routes } from 'universal-router';
 import { fint } from '../i18n/i18n.js';
-import '../spectrum/main/sc-page.js';
 
 export interface NpRouteMeta {
   translations?: Record<string, string>;
 }
 
 export interface NpRouteResult {
-  header?: TemplateResult;
-  main?: TemplateResult;
-  footer?: TemplateResult;
+  header?: TemplateResult | (() => TemplateResult);
+  sideNav?: TemplateResult | (() => TemplateResult);
+  main?: TemplateResult | (() => TemplateResult);
+  footer?: TemplateResult | (() => TemplateResult);
   meta?: NpRouteMeta;
 }
 
@@ -18,7 +18,7 @@ function getRootChildren() {
   const rootChildren: Routes<NpRouteResult> = [
     {
       path: '',
-      action: () => ({ main: html`<sc-page>Welcome | مرحبا</sc-page>` }),
+      action: () => ({}),
     },
   ];
 
@@ -57,8 +57,9 @@ export const routes: Routes<NpRouteResult> = [
   {
     path: '(.*)',
     action: () => ({
-      main: html`<h1>404</h1>`,
       header: html``,
+      sideNav: html``,
+      main: html`<h1>404</h1>`,
       footer: html``,
     }),
   },

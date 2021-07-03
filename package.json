@@ -46,6 +46,7 @@
   "license": "MIT",
   "dependencies": {
     "@fluent/bundle": "^0.16.1",
+    "@rollup/plugin-commonjs": "^19.0.0",
     "@spectrum-web-components/action-bar": "^0.2.9",
     "@spectrum-web-components/action-button": "^0.5.0",
     "@spectrum-web-components/action-group": "^0.4.9",
@@ -71,6 +72,8 @@
     "@spectrum-web-components/top-nav": "^0.3.3",
     "@spectrum-web-components/underlay": "^0.6.5",
     "@urql/core": "^2.1.4",
+    "carbon-components": "^10.37.0",
+    "carbon-web-components": "^1.14.1",
     "graphql": "^15.5.1",
     "lit": "^2.0.0-rc.2",
     "universal-router": "^9.0.1",

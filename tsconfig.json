@@ -16,7 +16,7 @@
     "rootDir": "./",
     "incremental": true,
 
-    "skipLibCheck": true
+    "skipLibCheck": true,
 
     "baseUrl": ".",
     "paths": {

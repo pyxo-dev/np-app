@@ -51,10 +51,25 @@ export default merge(baseConfig, {
     }),
 
     alias({
-      entries: {
-        src: path.resolve('out-tsc', 'src'),
-        carbon: path.resolve('out-tsc', 'src/carbon'),
-      },
+      entries: [
+        {
+          find: /^src\/(.*)\.js$/,
+          replacement: path.resolve('out-tsc', 'src/$1.js'),
+        },
+        {
+          find: /^carbon\/(.*)\.js$/,
+          replacement: path.resolve('out-tsc', 'src/carbon/$1.js'),
+        },
+
+        {
+          find: /^src\/(.*)$/,
+          replacement: path.resolve('src', '$1'),
+        },
+        {
+          find: /^carbon\/(.*)$/,
+          replacement: path.resolve('src', 'carbon/$1'),
+        },
+      ],
     }),
 
     commonjs(),

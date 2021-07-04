@@ -74,7 +74,11 @@ export default merge(baseConfig, {
 
     commonjs(),
 
-    postcss({ plugins: [], inject: false }),
+    postcss({
+      include: ['src/**/*', 'node_modules/carbon-components/**/*'],
+      plugins: [],
+      inject: false,
+    }),
 
     dynamicImportVars({
       exclude: 'node_modules/**',

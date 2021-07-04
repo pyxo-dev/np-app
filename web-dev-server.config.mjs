@@ -63,7 +63,11 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
       ],
     }),
 
-    postcss({ plugins: [], inject: false }),
+    postcss({
+      include: ['src/**/*', 'node_modules/carbon-components/**/*'],
+      plugins: [],
+      inject: false,
+    }),
 
     /** Use Hot Module Replacement by uncommenting. Requires @open-wc/dev-server-hmr plugin */
     hmr &&

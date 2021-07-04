@@ -74,9 +74,7 @@ export default merge(baseConfig, {
 
     commonjs(),
 
-    postcss({
-      plugins: [],
-    }),
+    postcss({ plugins: [], inject: false }),
 
     dynamicImportVars({
       exclude: 'node_modules/**',

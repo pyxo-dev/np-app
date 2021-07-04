@@ -63,9 +63,7 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
       ],
     }),
 
-    postcss({
-      plugins: [],
-    }),
+    postcss({ plugins: [], inject: false }),
 
     /** Use Hot Module Replacement by uncommenting. Requires @open-wc/dev-server-hmr plugin */
     hmr &&

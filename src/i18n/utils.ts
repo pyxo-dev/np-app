@@ -54,6 +54,10 @@ export function pt(path: string, lang?: string) {
   return translatedSegments.join('/');
 }
 
+export function p(path: string, lang?: string) {
+  return `/${lang || fint.lang}/${pt(path, lang)}`;
+}
+
 export function getPathTranslations(path: string, langs?: string[]) {
   const languages = langs || fint.langs;
 

@@ -13,13 +13,18 @@ export async function getGenericLangRoutes(lang: string) {
   const translations = getPathsTranslations(paths, fint.langs);
 
   const routes: Routes<NpRouteResult> = [
-    { path: '', action: () => ({ main: html`♡ ${lang} ♡` }) },
+    {
+      path: '',
+      action: () => ({
+        main: html`<main id="main" tabindex="0">♡ ${lang} ♡</main>`,
+      }),
+    },
 
     {
       path: `/${pt('docs')}`,
       action: () => ({
         // Change to something like: html`<docs-component></docs-component>`
-        main: html`** ${tc('docs')} **`,
+        main: html`<main id="main" tabindex="0">** ${tc('docs')} **</main>`,
         meta: { translations: translations.docs },
       }),
     },
@@ -27,18 +32,14 @@ export async function getGenericLangRoutes(lang: string) {
       path: `/${pt('tutorial')}`,
       action: () => ({
         // Change to something like: html`<tutorial-component></tutorial-component>`
-        main: html`-- ${tc('tutorial')} --`,
+        main: html`<main id="main" tabindex="0">** ${tc('tutorial')} **</main>`,
         meta: { translations: translations.tutorial },
       }),
     },
     {
       path: `/${pt('blog')}`,
       action: async () => ({
-        main: html`
-          <sc-page>
-            <sc-blog-post-lc-list></sc-blog-post-lc-list>
-          </sc-page>
-        `,
+        main: html`<main id="main" tabindex="0">** ${tc('blog')} **</main>`,
         meta: { translations: translations.blog },
       }),
     },

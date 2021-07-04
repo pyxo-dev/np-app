@@ -59,7 +59,7 @@ export const routes: Routes<NpRouteResult> = [
     action: () => ({
       header: html``,
       sideNav: html``,
-      main: html`<h1>404</h1>`,
+      main: html`<main id="main" tabindex="0"><h1>404</h1></main>`,
       footer: html``,
     }),
   },

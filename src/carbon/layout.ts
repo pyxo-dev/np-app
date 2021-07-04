@@ -1,3 +1,4 @@
+import 'carbon-web-components/es/components/skip-to-content/skip-to-content.js';
 import 'carbon-web-components/es/components/ui-shell/header-menu-button.js';
 import 'carbon-web-components/es/components/ui-shell/header-menu-item.js';
 import 'carbon-web-components/es/components/ui-shell/header-menu.js';
@@ -11,13 +12,18 @@ import 'carbon-web-components/es/components/ui-shell/side-nav-link.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-menu-item.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-menu.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav.js';
-import { css, html, LitElement, TemplateResult } from 'lit';
+import type { TemplateResult } from 'lit';
+import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
+import { query } from 'lit/decorators/query.js';
+import { I18nController } from 'src/i18n/i18n-controller.js';
+import { p, tc } from 'src/i18n/utils.js';
 import { BreakpointController } from 'src/responsive-system/breakpoint-controller.js';
 import { responsive } from 'src/responsive-system/responsive-system.js';
 import { BP } from 'src/responsive-system/responsive.js';
 import { router } from 'src/router/router.js';
+import { handleLink } from 'src/router/utils.js';
 
 @customElement('cc-layout')
 export class CcLayout extends LitElement {
@@ -57,116 +63,63 @@ export class CcLayout extends LitElement {
     }
   `;
 
+  private i18nController = new I18nController(this);
+
   private breakpointController = new BreakpointController(this);
 
-  private defaultHeader = html`<bx-header
-    id="header"
-    aria-label="IBM Platform Name"
-  >
-    <bx-header-menu-button
-      button-label-active="Close menu"
-      button-label-inactive="Open menu"
-    ></bx-header-menu-button>
-    <bx-header-name href="javascript:void 0" prefix="IBM"
-      >[Platform]</bx-header-name
+  @query('#main') mainElement: HTMLElement | undefined;
+
+  private skipToContent = () => {
+    this.mainElement?.focus();
+  };
+
+  private defaultHeader = () => {
+    const brandName = tc('brand-name');
+
+    return html`<bx-header
+      id="header"
+      aria-label=${brandName}
+      @click=${handleLink}
     >
-    <bx-header-nav menu-bar-label="IBM [Platform]">
-      <bx-header-nav-item href="javascript:void 0">Link 1</bx-header-nav-item>
-      <bx-header-nav-item href="javascript:void 0">Link 2</bx-header-nav-item>
-      <bx-header-nav-item href="javascript:void 0">Link 3</bx-header-nav-item>
-      <bx-header-menu menu-label="Link 4" trigger-content="Link 4">
-        <bx-header-menu-item href="javascript:void 0"
-          >Sub-link 1</bx-header-menu-item
-        >
-        <bx-header-menu-item href="javascript:void 0"
-          >Sub-link 2</bx-header-menu-item
-        >
-        <bx-header-menu-item href="javascript:void 0"
-          >Sub-link 3</bx-header-menu-item
-        >
-      </bx-header-menu>
-    </bx-header-nav>
-  </bx-header>`;
+      <bx-skip-to-content href="javascript: void 0" @click=${this.skipToContent}
+        >${tc('skip-to-content')}</bx-skip-to-content
+      >
+      <bx-header-menu-button
+        button-label-active=${tc('header-menu-button-label-active')}
+        button-label-inactive=${tc('header-menu-button-label-inactive')}
+      ></bx-header-menu-button>
+      <bx-header-name href="/">${brandName}</bx-header-name>
 
-  private defaultSideNav = () => html`<bx-side-nav
-    id="side-nav"
-    aria-label="Side navigation"
-    expanded
-    collapse-mode="responsive"
-  >
-    <bx-side-nav-items>
-      ${responsive.breakpoint < BP.M
-        ? html`
-            <bx-side-nav-link href="javascript:void(0)"
-              >Link 1</bx-side-nav-link
+      <bx-header-nav menu-bar-label=${brandName}>
+        <bx-header-nav-item href=${p('docs')}>${tc('docs')}</bx-header-nav-item>
+        <bx-header-nav-item href=${p('tutorial')}
+          >${tc('tutorial')}</bx-header-nav-item
+        >
+        <bx-header-nav-item href=${p('blog')}>${tc('blog')}</bx-header-nav-item>
+      </bx-header-nav>
+    </bx-header>`;
+  };
+
+  private defaultSideNav = () =>
+    responsive.breakpoint < BP.M
+      ? html`<bx-side-nav
+          id="side-nav"
+          aria-label="Side navigation"
+          expanded
+          collapse-mode="responsive"
+          @click=${handleLink}
+        >
+          <bx-side-nav-items>
+            <bx-side-nav-link href=${p('docs')}>${tc('docs')}</bx-side-nav-link>
+            <bx-side-nav-link href=${p('tutorial')}
+              >${tc('tutorial')}</bx-side-nav-link
             >
-            <bx-side-nav-link href="javascript:void(0)"
-              >Link 2</bx-side-nav-link
-            >
-            <bx-side-nav-link href="javascript:void(0)"
-              >Link 3</bx-side-nav-link
-            >
+            <bx-side-nav-link href=${p('blog')}>${tc('blog')}</bx-side-nav-link>
+          </bx-side-nav-items>
+        </bx-side-nav>`
+      : html``;
 
-            <bx-side-nav-menu title="Link 4">
-              <bx-side-nav-menu-item href="javascript:void 0">
-                Sub-link 1
-              </bx-side-nav-menu-item>
-              <bx-side-nav-menu-item href="javascript:void 0">
-                Sub-link 2
-              </bx-side-nav-menu-item>
-              <bx-side-nav-menu-item href="javascript:void 0">
-                Sub-link 3
-              </bx-side-nav-menu-item>
-            </bx-side-nav-menu>
-
-            <bx-side-nav-divider></bx-side-nav-divider>
-          `
-        : ''}
-
-      <bx-side-nav-menu title="L0 menu">
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-      </bx-side-nav-menu>
-      <bx-side-nav-menu title="L0 menu">
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-        <bx-side-nav-menu-item
-          active
-          aria-current="page"
-          href="javascript:void 0"
-        >
-          L0 menu item
-        </bx-side-nav-menu-item>
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-      </bx-side-nav-menu>
-      <bx-side-nav-menu title="L0 menu">
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-        <bx-side-nav-menu-item href="javascript:void 0">
-          L0 menu item
-        </bx-side-nav-menu-item>
-      </bx-side-nav-menu>
-      <bx-side-nav-divider></bx-side-nav-divider>
-      <bx-side-nav-link href="javascript:void(0)">L0 link</bx-side-nav-link>
-      <bx-side-nav-link href="javascript:void(0)">L0 link</bx-side-nav-link>
-    </bx-side-nav-items>
-  </bx-side-nav>`;
-
-  private defaultMain = html`<main id="main">Main...</main>`;
+  private defaultMain = html`<main id="main" tabindex="0">Main...</main>`;
 
   private defaultFooter = html`<footer id="footer">Footer...</footer>`;
 
@@ -185,7 +138,7 @@ export class CcLayout extends LitElement {
   render() {
     let header =
       typeof this.header === 'function' ? this.header() : this.header;
-    if (header === undefined) header = this.defaultHeader;
+    if (header === undefined) header = this.defaultHeader();
 
     let sideNav =
       typeof this.sideNav === 'function' ? this.sideNav() : this.sideNav;

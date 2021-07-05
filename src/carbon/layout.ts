@@ -1,22 +1,21 @@
+import 'carbon-web-components/es/components/button/button.js';
 import 'carbon-web-components/es/components/skip-to-content/skip-to-content.js';
 import 'carbon-web-components/es/components/ui-shell/header-menu-button.js';
-import 'carbon-web-components/es/components/ui-shell/header-menu-item.js';
-import 'carbon-web-components/es/components/ui-shell/header-menu.js';
 import 'carbon-web-components/es/components/ui-shell/header-name.js';
 import 'carbon-web-components/es/components/ui-shell/header-nav-item.js';
 import 'carbon-web-components/es/components/ui-shell/header-nav.js';
 import 'carbon-web-components/es/components/ui-shell/header.js';
-import 'carbon-web-components/es/components/ui-shell/side-nav-divider.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-items.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-link.js';
-import 'carbon-web-components/es/components/ui-shell/side-nav-menu-item.js';
-import 'carbon-web-components/es/components/ui-shell/side-nav-menu.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav.js';
+import AppSwitcher20 from 'carbon-web-components/es/icons/app-switcher/20.js';
+import UserAvatar20 from 'carbon-web-components/es/icons/user--avatar/20.js';
 import type { TemplateResult } from 'lit';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
 import { query } from 'lit/decorators/query.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { I18nController } from 'src/i18n/i18n-controller.js';
 import { p, tc } from 'src/i18n/utils.js';
 import { BreakpointController } from 'src/responsive-system/breakpoint-controller.js';
@@ -35,24 +34,27 @@ export class CcLayout extends LitElement {
       display: grid;
       grid-template-columns: auto 1fr;
       grid-template-rows: auto 1fr auto;
+
+      background-color: var(--cds-ui-background, #fff);
+      color: var(--cds-text-01, #161616);
     }
 
-    :host > #header {
+    #header {
       grid-column: 1 / -1;
       grid-row: 1 / 2;
     }
 
-    :host > #side-nav {
+    #side-nav {
       grid-column: 1 / 2;
       grid-row: 2 / -1;
     }
 
-    :host > #main {
+    #main {
       grid-column: 2 / -1;
       grid-row: 2 / 3;
     }
 
-    :host > #footer {
+    #footer {
       grid-column: 2 / -1;
       grid-row: 3 / -1;
     }
@@ -60,6 +62,15 @@ export class CcLayout extends LitElement {
     bx-header,
     bx-side-nav {
       position: unset;
+    }
+
+    #header-global {
+      margin-inline-start: auto;
+      display: flex;
+    }
+
+    #header-global bx-btn svg {
+      fill: var(--cds-icon-03);
     }
   `;
 
@@ -97,6 +108,14 @@ export class CcLayout extends LitElement {
         >
         <bx-header-nav-item href=${p('blog')}>${tc('blog')}</bx-header-nav-item>
       </bx-header-nav>
+      <div id="header-global">
+        <bx-btn kind="ghost"
+          >${unsafeHTML(UserAvatar20().strings.join(''))}</bx-btn
+        >
+        <bx-btn kind="ghost"
+          >${unsafeHTML(AppSwitcher20().strings.join(''))}</bx-btn
+        >
+      </div>
     </bx-header>`;
   };
 

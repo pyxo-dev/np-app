@@ -8,14 +8,12 @@ import 'carbon-web-components/es/components/ui-shell/header.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-items.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-link.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav.js';
-import AppSwitcher20 from 'carbon-web-components/es/icons/app-switcher/20.js';
-import UserAvatar20 from 'carbon-web-components/es/icons/user--avatar/20.js';
+import 'carbon/header-global-actions.js';
 import type { TemplateResult } from 'lit';
 import { css, html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators/custom-element.js';
 import { property } from 'lit/decorators/property.js';
 import { query } from 'lit/decorators/query.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { I18nController } from 'src/i18n/i18n-controller.js';
 import { p, tc } from 'src/i18n/utils.js';
 import { BreakpointController } from 'src/responsive-system/breakpoint-controller.js';
@@ -63,15 +61,6 @@ export class CcLayout extends LitElement {
     bx-side-nav {
       position: unset;
     }
-
-    #header-global {
-      margin-inline-start: auto;
-      display: flex;
-    }
-
-    #header-global bx-btn svg {
-      fill: var(--cds-icon-03);
-    }
   `;
 
   private i18nController = new I18nController(this);
@@ -108,14 +97,7 @@ export class CcLayout extends LitElement {
         >
         <bx-header-nav-item href=${p('blog')}>${tc('blog')}</bx-header-nav-item>
       </bx-header-nav>
-      <div id="header-global">
-        <bx-btn kind="ghost"
-          >${unsafeHTML(UserAvatar20().strings.join(''))}</bx-btn
-        >
-        <bx-btn kind="ghost"
-          >${unsafeHTML(AppSwitcher20().strings.join(''))}</bx-btn
-        >
-      </div>
+      <cc-header-global-actions></cc-header-global-actions>
     </bx-header>`;
   };
 

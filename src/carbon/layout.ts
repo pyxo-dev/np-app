@@ -8,6 +8,7 @@ import 'carbon-web-components/es/components/ui-shell/header.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-items.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav-link.js';
 import 'carbon-web-components/es/components/ui-shell/side-nav.js';
+import 'carbon/default-main.js';
 import 'carbon/header-global-actions.js';
 import type { TemplateResult } from 'lit';
 import { css, html, LitElement } from 'lit';
@@ -120,7 +121,10 @@ export class CcLayout extends LitElement {
         </bx-side-nav>`
       : html``;
 
-  private defaultMain = html`<main id="main" tabindex="0">Main...</main>`;
+  private defaultMain = html`<cc-default-main
+    id="main"
+    tabindex="0"
+  ></cc-default-main>`;
 
   private defaultFooter = html`<footer id="footer">Footer...</footer>`;
 
